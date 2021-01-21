@@ -1,0 +1,105 @@
+/* Cascading Style Sheets (CSS)
+style from original lovelace/html
+
+anchor color: #8866cc; (lavendar)  hover/focus: #0062cc; (navy blue)
+*/
+body {
+    background: #FBFDCF;  /* background color */
+    color: #09033D;       /* text color */
+    font: 12pt Georgia;   /* text font */
+    text-align: justify;  /* text justify */
+    padding:0 64px 64px;  /* left and right padding */
+}
+h1 {
+    text-align: center;
+}
+img {
+    padding:0 16px 16px;  /* left and right padding */  
+}
+.menu li {
+    margin-bottom: 18px;  /* menu item has bottom spacing */
+}
+a {
+   color:#8866cc; /* lavendar */
+   text-decoration:none; /* no underline */
+   background-color:transparent;
+}
+a:hover,a:focus{
+   color:#0062cc; /* navy blue */
+   text-decoration:underline;
+}
+/* table */
+table {
+  border-collapse: collapse;
+}
+th, td {
+  padding: 8px;
+}
+.header {
+    font: 20pt Comic Sans MS;   /* text font */
+    font-weight: bold;
+}
+.note {
+    font: 15pt Comic Sans MS;   /* text font */
+}
+.en { display: inline }
+.ch { display: none }
+.au { display: inline }
+.hk { display: none }
+.banner { /* to stay on top right corner */
+    position: fixed;
+    right: 0;
+    background: #CCFDCF; /* pale green */
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 30px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+#modal-content {
+  margin: auto;
+  display: block;
+  width: 90%; /* or 80%, 100% */
+  /* max-width: 700px; */
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#modal-caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  color: #ccc;
+  padding: 10px 0;
+  height: 150px;
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 10px; /* reduce top */
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 16px; /* reduce font */
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
