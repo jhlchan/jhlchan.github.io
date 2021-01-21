@@ -1,0 +1,382 @@
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>GitHub and SourceTree</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() { 
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>GitHub and SourceTree</br>
+<small><small>with git, a version control system.</small></small></h1>
+
+When I was writing my thesis, chapter by chapter, I did all my work on my computer (of course). The most dreadful thing that can happen is: my computer fails!
+<p>
+To protect against such a disaster, I need constant backups of my draft.
+
+
+<h2>Backup and Versions</h2>
+Backing up the latest draft is not enough. Sometimes I want to rewrite a whole chapter, so I need to go back to my previous drafts. This requires a version control system:
+<ul>
+<li>version 1: chapter 1.</li>
+<li>version 2: chapter 1 + half of chapter 2.</li>
+<li>version 3: chapter 1 + chapter 2.</li>
+</ul>
+<p>
+Say I want to rewrite chapter 2; the system will allow me to go back to version 1 and retrieve it. Then I realise that actually the first half of chapter 2 is good, and I would like to try another idea to finish chapter 2. So I retrieve version 2. If the idea works, I shall discard version 3; but if the idea fails, I can retrieve version 3 and go on.
+<p>
+What I need is a system that not only keeps versions of a document, but also keeps track of branching developments, so that I can decide whether to merge or discard the branches later.
+
+<h2>Version Control: git</h2>
+Such a version control system is provided by git, developed by a community of programmers. The software is free, and open-source -- which means, if you really want to, you can read the programming codes!
+<p>
+The good news is: you don't even need to install git to use it. Get a free account on GitHub [1], and they provide storage space for you on the web. Your GitHub account will consists of repositories, like folders. You store files in repositories, or create subfolders to group your files. Any changes you make to the files will be tracked by git, provided by GitHub.
+<p>
+The bad news is: because all your files are web-based, editing can be slow; this is even worse when the network is down -- you can do no editing!
+<p>
+The solution is to install git on your local computer, and somehow clone your remote repository to become a local repository. The git system can handle a local and a remote repository, by keeping track of their heads: a pointer to the latest change. It has ways to detect if the heads are out of sync, and commands to keep the heads in sync.
+<p>
+I use the word 'command' because git actions are given by special keywords. You need a command-line interface to type in git commands for actions. Windows or MacOS have command-line interfaces, but you may not be familiar with them.
+<p>
+Luckily, there is a free graphic-user interface (GUI) for git, called SourceTree [2]. In your computer, you just need to install SourceTree, because it will download and install git for you.
+<p>
+As an exercise, we would like to do the following:
+<ul>
+<li>Have a free GitHub account (use non-ANU email, think of a password)</li>
+<li>In GitHub, create a repository called 'sandbox', have a README and add a couple of files.</li>
+<li>Install SourceTree on your computer, link to a GitHub account.</li>
+<li>Clone 'sandbox' using SSH from GitHub to SourceTree (choose your local destination)</li>
+<li>In your computer, make changes to the files, stage, add comments, commit with push.</li>
+</ul>
+We shall see how each step can be done.
+
+<h2>Git on the Web</h2>
+You can get a free GitHub account by:
+<ul>
+<li>choose a username</li>
+<li>enter email for verification (use a non-ANU email is better)</li>
+<li>create your password</li>
+<li>solve a puzzle (to show you are not a robot)</li>
+</ul> 
+If your username is xyz, you'll own https://github.com/xyz.
+GitHub username is case-sensitive, and allows numbers and hypens, so make it identifies yourself.
+<!--
+ (email)
+Try not to use your ANUID as username, although it is unique. I use jhlchan, so my GitHub account is: https://github.com/jhlchan.
+-->
+<p>
+After sign in to your GitHub, the default tab is Overview. Of the other tabs, we shall use only Repositories for now.
+<p>
+Click "Repositories" at top. For a brand new account, there is noting. Find the "New" button (green), and create a new repository:
+<ul>
+<li>Owner will be your username (cannot change)</li>
+<li>Repository Name: sandbox (keep it public)</li>
+<li>check the box for: Add ReadMe (gives a default ReadMe file, can edit later)</li>
+</ul> 
+Click "Create Repository", and your sandbox repository appears, with ReadMe.
+<p>
+We shall focus on the process of making changes, tracking changes, etc. Therefore, we shall use only text files, with short lines like 'line 1', 'line 2' as content.
+<p>
+You can figure out how to add a file chapter1.txt with two lines. In sandbox repository,
+<ul>
+<li>Click: Add file > Create new file (the other is upload file).</li>
+<li>Name of file: chapter1.txt (Edit new file)</li>
+<li>A simple text editor appears. Type in two lines: line 1, line 2.</li>
+</ul>
+Now if you click the tab "Preview changes", a comment panel will be shown. This is because the next action is usually "Commit new file" (green), which basically means "file is done, will be tracked", and the comment is a note for the commit action. If you would like to edit again, back to "Edit new file" tab. If you click "cancel" in Preview, the new file is discarded. There is a default comment (you can type over that). We just take that, so click "Commit new file".
+<p>
+Check that the sandbox repository now has one file. Add another file chapter2.txt, with two lines 'first line', 'second line'. Preview changes, and commit.
+<p>
+Now the sandbox repository has two files. Click the file chapter1.txt. Find the icon to edit this file. Add another line 'line 3'. Preview changes will highlight the changes, and commit.
+<p>
+When you click a file in the repository, you can read the text content. Click "Blame" on the right, and view the commits for this file.
+<p> 
+Note that, if name is 'chapter1', there will be no file extension. It will be a text file anyway, since the editor is a simple text editor.
+<p>
+The web-based text editor will be clumsy for large text files. To prepare for the next step, click "sandpit" to go back to the repository. After "Add file" is "Code" (green). Its dropdown has "Clone", with some options. Click "SSH", as we shall use that option.
+
+<h2>Git on Computer</h2>
+Download and install SourceTree [2] on your computer. The installation process may need your permission, and may ask for an Atlassian account. Just set up one with email and password, as a registered user of Atlassian's product: SourceTree. (view videos later)
+<p>
+Note that SourceTree installation will automatically download git and install on your computer. It opens with a main window: Local, Remote, New. We shall use only Local, for local repositories, and New, where the dropdown has "Clone from URL".
+<p>
+For local work, need to clone a remote repository in your computer.
+We shall make a destination for the local sandbox repository.
+Pick a location from the file explorer, say <your-home-directory>/anu/sandbox.
+Thus you have a local sandbox, albeit empty, ready for cloning.
+<p>
+In your GitHub, go to sandbox repository, click "Code", and copy the URL from Clone SSH: the rightmost icon will copy the URL to the clipboard.
+<p>
+Back to SourceTree, in the main window:
+<ul>
+<li>Click "New > Clone from URL"</li>
+<li>Source URL: (paste from clipboard)</li>
+<li>Destination Path: (use ... to locate local sandbox)</li>
+<li>Name: (default is: sandbox)</li>
+</ul>
+Click "Clone". After cloning, SourceTree will open another window for this repository, showing a linear graph. Check that the local sandbox is populated with the remote files: chapter1.txt, chapter2.txt.
+<p>
+Now we are going to make local changes, and see how the system tracks it, and how to populate the changes to the remote GitHub. Follow these steps:
+<ul>
+<li>open the local chapter1.txt in a text editor.</li>
+<li>add: line 4. (save it)</li>
+<li>In SourceTree, notice: File status (1). Click, and see the indicated changes.</li>
+<li>See (...) on the right. Choose 'Stage file', that is ready for commit.</li>
+<li>Then the file is moved up to 'Staged files'.</li>
+<li>Type commit message: add one line.</li>
+<li>There is a checkbox for "Push changes immediately", leave it blank just for now.</li>
+</ul>
+Click "Commit". This is committing the changes to the local git (installed by SourceTree).
+The File status (1) is gone. Click History, and there is a message (now: 1 ahead).
+This shows the head of local (which points to your latest commit) is 1 step ahead of the head of remote (in GitHub, which the the originHEAD in next line).
+To bring the two heads in sync, click "Push" along the top (it has a [1] to remind you), and click OK.
+<p>
+Thus there are two steps: commit puts the changes to the local git, and push updates the changes to the remote git. It is a good habit to combine these steps:
+<ul>
+<li>In your local computer, edit chapter1.txt again, now delete line 2. (save it)</li>
+<li>Note the change in File Status in SourceTree.</li>
+<li>Stage and commit again with message: delete one line, but this time click the checkbox: Push changes immediately.</li>
+</ul>
+Click "Commit", and push follows automatically. This will be the default behaviour until the box is unchecked.
+
+<h2>Epilog</h2>
+In GitHub, refresh your sandbox repository to see the changes coming from your computer.
+<p>
+There are other things git can do: branching, forking, etc. However, that's enough for initial play. The other features can be found in SourceTree docs, or YouTube.
+
+<!--
+
+Mine:
+https://github.com/jhlchan
+
+If you look at my GitHub, there are 3 repositories:
+(1) sandbox (a playground)
+(2) HOL (a fork of the theorem-prover)
+(3) jhlchan.github.io (tell you about it later)
+
+
+Example:
+https://github.com/KathyReid
+PhD student at ANU
+Click "Repositories", there are 133 of them.
+https://KathyReid.github.io (redirects to https://kathyreid.com.au/?referrer=GitHub)
+
+Salman Khan
+https://salman-h-khan.github.io
+A computer vision researcher affiliated with ANU.
+https://github.com/salman-h-khan
+Click "Repositories", there are 15 of them.
+
+Septian Razi
+https://septianrazi.github.io
+Click "About": University student by day, developer by night.
+https://github.com/septianrazi
+Click "Repositories", there are 11 of them.
+Note his repository for COMP2710 Summer 2018.
+
+Dale (14 repositories)
+https://github.com/tail-recursion
+has ANU-Courses, comp1110-anu and ENGN2219, not good.
+
+Mark Reid (23 repositories)
+https://github.com/mreid
+An academic at ANU CECS, machine learning.
+https://mreid.github.io (no)
+
+Qiū Ruì (37 repositories)
+https://github.com/rexarski
+https://rexarski.github.io (no)
+
+
+Q1. Can GitHub be used by itself, entirely remotely?
+Sign in to GitHub.
+Repositories: New
+Owner: jhlchan/  Repository Name: sandbox (public)
+Add ReadMe (Create Repository)
+Will create repository, (Go to file) (Add file) (Code)
+Code has clone: https://github.com/jhlchan/sandbox.git  (for later use)
+Add file > Create new file (the other is upload file)
+Name of file: chapter1.txt  (Edit new file)
+(simple text editor)  line 1, line 2.
+(Preview) shows comment panel. Add description: new chapter. click green (Commit new file)
+-- if cancel, not back to editor, but discarded. commit directly to main branch?! default name: main.
+-- use (Edit new file) tab to edit again.
+Add file: chapter2.txt, first line, second line.
+Go to file, (find on the right) edit this file.
+line 3, Preview changes, commit.
+Or: click the file in repository, on the right (...) Edit file (or View file, or Delete file).
+A1. Yes, GitHub can work by itself, remotely.
+Note: if name is 'chapter1', there will be no file extension.
+However, only for text files, since editor is a simple text editor.
+
+For local work, need to clone the repository in your computer.
+Code: clone: https://github.com/jhlchan/sandbox.git (HTTPS)
+use SSH: git@github.com:jhlchan/sandbox.git
+Now in SourceTree,
+(Local)(Remote)(New ...)
+New > Clone from URL
+Source URL: https://github.com/jhlchan/sandbox.git
+Destination Path: (use ... to choose) ~/jc/work/anu/sandbox (make this first)
+Name: sandbox (default is: sandbox)
+Click "Clone".
+After cloning, SourceTree will open another window for this repository, showing a linear graph.
+
+Use your local computer's file explorer, open chapter1.txt in a text editor in local sandbox.
+add: line 4  (save it)
+Notice: File status (1)
+Click, and see the indicated changes.
+See (...) on the right. Choose 'Stage file', that is ready for commit.
+Then file is moved up to 'Staged files'.
+Click commit message: add one line
+Notice: (blank) Push changes immediately <-- leave it blank just for now.
+Click Commit.
+Status is empty. Click History.
+(now: 1 ahead) <-- this shows the head of local (which points to your latest commit) is 1 step ahead of the head of remote (in GitHub, which the the originHEAD in next line)
+To bring the two heads in sync, click "Push" along the top (it has a [1] to remind you) click OK.
+
+Edit chapter1.txt again, now delete line 2.
+Again, note the change in File Status in SourceTree.
+stage and commit again with message: delete one line,
+but this time click the checkbox: Push changes immediately
+
+In GitHub, refresh your project sandbox.
+Click 'Chapter1.txt', then on the right, click 'History'
+
+Clone: git@github.com:jhlchan/jhlchan.github.io.git (SSH)
+Destination: ~/jc/work/anu/web
+
+The destination path /Users/josephchan/jc/work/anu already exists and is not an empty folder. Please choose an empty or new folder into which to clone.
+
+
+-->
+
+
+<h2>Others</h2>
+<!--
+The steps to follow are:
+(1) Have your own GitHub account
+(2) Log in to GitHub, create a project
+(3) Install SourceTree. This will also install git locally on your computer.
+(4) SourceTree will ask: add an account, choose 'GitHub' and your account details.
+-- although you can skip, and add this later.
+-- load SSH key? if skip before, say No.
+-- use SourceTree clone -- not yet, switch to 'Create New Repository' (that is local)
+
+To try:
+* In SourceTree,
+* Create New Repository 'sandbox' (Git has no sandbox)
+* put text file to it. Can it commit? Will Git has sandbox?
+
+
+(4) In SourceTree, add your GitHub account (Google 'SourceTree add GitHub account')
+* Add account:
+Type: GitHub
+Sign in account: username/password (not working for me!)
+(5) SourceTree will ask for local location?
+
+To create a GitHub account:
+https://github.com/
+Create a username, email for verification, password, verify you are indeed human by solving a puzzle.
+
+Complete setup by following instructions, then you can create your own repository, a folder to store stuff.
+
+Your repository will be prefixed by your username. Therefore think of a good username.
+
+Usually people assign each project a repository. Since initially we shall just play around, we shall name the repository 'sandbox' and just store text files.
+
+
+
+-->
+
+
+<h2>Links</h2>
+<ul>
+<!-- links 1 - 10 -->
+<li>【M1】
+A Chinese Ghost Story I (Chinese subtitle)
+ - 【HD】1987【1:36:05】<br>
+<a href="https://www.youtube.com/watch?v=j3K8ML70XlU">
+<img src="http://img.youtube.com/vi/j3K8ML70XlU/0.jpg" width="15%"/></a><br>
+<a href="https://en.wikipedia.org/wiki/A_Chinese_Ghost_Story">【Wikipedia】</a>Cast: Leslie Cheung, Joey Wong, Wu Ma.<p>
+</li>
+<!-- end of links -->
+</ul>
+
+
+
+<hr>
+<!-- https://jhlchan.github.io/tools/git.html -->
+</body>
+</html>
