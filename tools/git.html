@@ -102,7 +102,7 @@ What I need is a system that not only keeps versions of a document, but also kee
 <h2>Version Control: git</h2>
 Such a version control system is provided by git, developed by a community of programmers. The software is free, and open-source -- which means, if you really want to, you can read the programming codes!
 <p>
-The good news is: you don't even need to install git to use it. Get a free account on GitHub [1], and they provide storage space for you on the web. Your GitHub account will consists of repositories, like folders. You store files in repositories, or create subfolders to group your files. Any changes you make to the files will be tracked by git, provided by GitHub.
+The good news is: you don't even need to install git to use it. Get a free account on GitHub【1】, and they provide storage space for you on the web. Your GitHub account will consists of repositories, like folders. You store files in repositories, or create subfolders to group your files. Any changes you make to the files will be tracked by git, provided by GitHub.
 <p>
 The bad news is: because all your files are web-based, editing can be slow; this is even worse when the network is down -- you can do no editing!
 <p>
@@ -110,7 +110,7 @@ The solution is to install git on your local computer, and somehow clone your re
 <p>
 I use the word 'command' because git actions are given by special keywords. You need a command-line interface to type in git commands for actions. Windows or MacOS have command-line interfaces, but you may not be familiar with them.
 <p>
-Luckily, there is a free graphic-user interface (GUI) for git, called SourceTree [2]. In your computer, you just need to install SourceTree, because it will download and install git for you.
+Luckily, there is a free graphic-user interface (GUI) for git, called SourceTree【2】. In your computer, you just need to install SourceTree, because it will download and install git for you.
 <p>
 As an exercise, we would like to do the following:
 <ul>
@@ -123,7 +123,7 @@ As an exercise, we would like to do the following:
 We shall see how each step can be done.
 
 <h2>Git on the Web</h2>
-You can get a free GitHub account by:
+You can get a free GitHub account【3】 by:
 <ul>
 <li>choose a username</li>
 <li>enter email for verification (use a non-ANU email is better)</li>
@@ -168,16 +168,23 @@ Note that, if name is 'chapter1', there will be no file extension. It will be a 
 The web-based text editor will be clumsy for large text files. To prepare for the next step, click "sandpit" to go back to the repository. After "Add file" is "Code" (green). Its dropdown has "Clone", with some options. Click "SSH", as we shall use that option.
 
 <h2>Git on Computer</h2>
-Download and install SourceTree [2] on your computer. The installation process may need your permission, and may ask for an Atlassian account. Just set up one with email and password, as a registered user of Atlassian's product: SourceTree. (view videos later)
+Download and install SourceTree【4】【5】on your computer. The installation process may:
+<ul>
+<li>need your permission, as part of safety measure for computer security.</li>
+<li>ask for an Atlassian account. Just set up one with email and password, as a registered user of Atlassian's product: SourceTree.</li>
+<li>add an account for respositories. This will be your GitHub account, so provide your login details.</li>
+</ul>
+All these should be straightforward, or refer to videos in the links.
 <p>
 Note that SourceTree installation will automatically download git and install on your computer. It opens with a main window: Local, Remote, New. We shall use only Local, for local repositories, and New, where the dropdown has "Clone from URL".
 <p>
 For local work, need to clone a remote repository in your computer.
 We shall make a destination for the local sandbox repository.
-Pick a location from the file explorer, say <your-home-directory>/anu/sandbox.
+Create a new location (folder) from the file explorer, say &lt;your-home-directory&gt;/work/sandbox.
 Thus you have a local sandbox, albeit empty, ready for cloning.
 <p>
 In your GitHub, go to sandbox repository, click "Code", and copy the URL from Clone SSH: the rightmost icon will copy the URL to the clipboard.
+(Note: if there is a problem using SSH, either in GitHub here or SourceTree next, view the last video【6】for a possible resolution.)
 <p>
 Back to SourceTree, in the main window:
 <ul>
@@ -212,7 +219,7 @@ Thus there are two steps: commit puts the changes to the local git, and push upd
 Click "Commit", and push follows automatically. This will be the default behaviour until the box is unchecked.
 
 <h2>Epilog</h2>
-In GitHub, refresh your sandbox repository to see the changes coming from your computer.
+In GitHub, refresh your sandbox repository to see the changes coming from your computer. Recall that "Blame" shows the file change history.
 <p>
 There are other things git can do: branching, forking, etc. However, that's enough for initial play. The other features can be found in SourceTree docs, or YouTube.
 
@@ -323,7 +330,6 @@ The destination path /Users/josephchan/jc/work/anu already exists and is not an 
 -->
 
 
-<h2>Others</h2>
 <!--
 The steps to follow are:
 (1) Have your own GitHub account
@@ -356,6 +362,40 @@ Your repository will be prefixed by your username. Therefore think of a good use
 
 Usually people assign each project a repository. Since initially we shall just play around, we shall name the repository 'sandbox' and just store text files.
 
+Sourcetree
+https://www.sourcetreeapp.com
+A free Git client for Windows and Mac
+
+Sourcetree support: Install and set up Sourcetree
+https://confluence.atlassian.com/get-started-with-sourcetree/install-and-set-up-sourcetree-847359043.html
+
+
+How to Create a GitHub Account - 2020 【5:03】
+https://www.youtube.com/watch?v=pYTifWe6M8I
+GitHub Tutorial 2020 - Beginner's Training Guide 【8:11】
+https://www.youtube.com/watch?v=iv8rSLsi1xo
+This uses GitHub Desktop.
+
+How to Use Sourcetree for Git Version Control System【10:29】
+https://www.youtube.com/watch?v=FIabco-p_nY
+Install in MacOS. Ignore the BitBucket part.
+Have GitHub project, with 'clone' copy URL.
+In SourceTree, New > clone repository:
+Source URL: from copy URL
+Destination: (choose local from ...)
+Name: (fill in from copy URL)
+Video skip this, and use an existing repository (using command line git?)
+commit is to local Git, push is to remote Git.
+This shows branches, too complex for beginners!
+
+Getting started with Git using SourceTree - Part 1: Version control 【7:40】
+https://www.youtube.com/watch?v=UD7PV8auGLg
+Install in Windows, also KDiff3.
+Getting started with Git using SourceTree - Part 2: Working together【11:30】
+https://www.youtube.com/watch?v=sUAs0M_dSgE
+
+Github Tutorial For Beginners - Github Basics for Mac or Windows & Source Control Basics【18:54】
+https://www.youtube.com/watch?v=0fKg7e37bQE
 
 
 -->
@@ -363,13 +403,40 @@ Usually people assign each project a repository. Since initially we shall just p
 
 <h2>Links</h2>
 <ul>
-<!-- links 1 - 10 -->
-<li>【M1】
-A Chinese Ghost Story I (Chinese subtitle)
- - 【HD】1987【1:36:05】<br>
-<a href="https://www.youtube.com/watch?v=j3K8ML70XlU">
-<img src="http://img.youtube.com/vi/j3K8ML70XlU/0.jpg" width="15%"/></a><br>
-<a href="https://en.wikipedia.org/wiki/A_Chinese_Ghost_Story">【Wikipedia】</a>Cast: Leslie Cheung, Joey Wong, Wu Ma.<p>
+<li>【1】GitHub: Where the world builds software<br>
+<a href="https://github.com/">https://github.com/</a><br>
+Sign up for a free account.</br>
+Documentation can be found in
+<a href="https://docs.github.com/en/github">https://docs.github.com/en/github</a>
+<p>
+</li>
+<li>【2】Sourcetree: A free Git client for Windows and Mac<br>
+<a href="https://www.sourcetreeapp.com">https://www.sourcetreeapp.com</a><br>
+Download and install in your system.</br>
+Documentation can be found in
+<a href="https://confluence.atlassian.com/get-started-with-sourcetree">
+https://confluence.atlassian.com/get-started-with-sourcetree</a>
+<p>
+</li>
+<li>【3】How to Create a GitHub Account - 2020【5:03】<br>
+<a href="https://www.youtube.com/watch?v=pYTifWe6M8I">
+<img src="http://img.youtube.com/vi/pYTifWe6M8I/0.jpg" width="15%"/></a><br>
+A step by step tutorial.<p>
+</li>
+<li>【4】How to Use Sourcetree for Git Version Control System【10:29】<br>
+<a href="https://www.youtube.com/watch?v=FIabco-p_nY">
+<img src="http://img.youtube.com/vi/FIabco-p_nY/0.jpg" width="15%"/></a><br>
+Install in MacOS. Ignore the BitBucket part, and skip branching.<p>
+</li>
+<li>【5】Getting started with Git using SourceTree - Part 1: Version control 【7:40】<br>
+<a href="https://www.youtube.com/watch?v=UD7PV8auGLg">
+<img src="http://img.youtube.com/vi/UD7PV8auGLg/0.jpg" width="15%"/></a><br>
+Install in Windows. Ignore KDiff3, a tool to show file differences.<p>
+</li>
+<li>【6】Getting started with Git using SourceTree - Part 2: Working together【11:30】<br>
+<a href="https://www.youtube.com/watch?v=sUAs0M_dSgE">
+<img src="http://img.youtube.com/vi/sUAs0M_dSgE/0.jpg" width="15%"/></a><br>
+This explains how to generate SSH keys for both Windows and MacOs.<p>
 </li>
 <!-- end of links -->
 </ul>
