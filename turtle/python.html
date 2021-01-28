@@ -1,0 +1,540 @@
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>Turtle Graphics</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() { 
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>Turtle Graphics</br>
+<small><small>using Python</small></small></h1>
+
+We shall take a look at programming, having fun.
+<p>
+
+<h2>Computer Programming</h2>
+Computers are machines. They perform tasks by instructions:
+<ul>
+<li>How to put together instructions is called <b>programming</b>,</li>
+<li>To write down the instructions require a <b>programming language</b>.</li>
+</ul>
+In short, we need a programming language to instruct computers to work.
+<p>
+Like human languages, there are many programming languages. However, ideas are the same: every language can express numbers (1, 2, 3), characters ('a', 'b', 'c'), strings ("apple", "orange"), and others to represent data.
+<p>
+Programming languages are used to express programming ideas:
+<ul>
+<li>data of various types: numbers, strings, etc.</li>
+<li>symbols for variables: place-holder for data.</li>
+<li>instructions sequencing: going step-by-step.</li>
+<li>instructions branching: decide by a test.</li>
+<li>instructions looping: control by counter or exit test.</li>
+<li>instructions grouping into a function, with parameters.</li>
+<li>function grouping into a program.</li>
+<li>program grouping into a module.</li>
+</ul>
+
+<h2>Python in Browser</h2>
+For a demonstration, we shall use a version of Python【1】running in a browser.
+<p>
+Once the webpage is loaded, you'll find an editor on the left, and a drawing board (also called the canvas) on the right.
+The editor may have a program loaded, in an editor tab called main.py. The drawing board shows the result of running the program.
+<p>
+We shall begin with a clean sheet, so clear the program on the left. Move the cursor along the top, click dropdowns (▽) to be familiar with the buttons.
+
+<h2>Making a Turtle</h2>
+Start by typing this line:
+<pre>
+import turtle
+</pre>
+This loads the module turtle, some codes written by a team so that we can make use of it to draw graphics. We name our little turtle bob, and create it by invoking the contructor Turtle():
+<pre>
+bob = turtle.Turtle()
+</pre>
+So far we have two lines. If you 'run' this program (the button ▷), there is nothing shown on the drawing board. Now add these two lines:
+<pre>
+bob.shape("turtle")
+bob.speed(10)
+</pre>
+Click 'run' again, and bob appears on the drawing board!
+<p>
+So far, there are 4 lines for the program. We can add comments in Python, prefix by #, to explain what they are doing:
+<pre>
+import turtle          # load module
+bob = turtle.Turtle()  # construct turtle instance
+
+bob.shape("turtle")    # give bob a shape
+bob.speed(10)          # set speed for bob
+</pre>
+We shall type more lines later, but these 4 lines will stay.
+
+<h2>Moving a Turtle</h2>
+Now bob is an object, let us make bob move. Any turtle can respond to certain methods:
+<ul>
+<li>fd(steps) to go forward by a number of steps,</li>
+<li>lt(degrees) to do a left turn by a number of degrees,</li>
+<li>bd(steps) to go backwards by a number of steps,</li>
+<li>rt(degrees) to do a right turn by a number of degrees,</li>
+</ul>
+To make an object respond to a method, put them together with a dot '.' as connective.
+Try these three lines:
+<pre>
+bob.fd(100)
+bob.lt(90)
+bob.fd(100)
+</pre>
+Click 'run' and see how bob moves. Now replace these 3 lines by:
+<pre>
+for j in range(4):
+   bob.fd(100)
+   bob.lt(90)
+</pre>
+Note the indentation, which is required for Python. Run and bob will draw a square. Can you see why?
+<p>
+The above is a Python for-loop, with range(4) giving the list [0, 1, 2, 3]. The index j takes each value of the list, successively.
+The effect of this for-loop is to repeat the indented body 4 times. Each time the body code runs, bob moves forward and makes a left right-angle turn. This draws one side of a square. Repeating 4 times draws the complete square. 
+
+<h2>Using a Function</h2>
+Now bob can draw a square, but we would like bob to draw many squares. Surely, we don't want to retype the square for-loop again and again. To simplify the work, we shall use a function.
+<p>
+In math, a function looks like this: f(x) = 2 &#8270; x + 3. The function has a name f, and works on a variable x. The variable x is the input, and f(x) gives the formula for the output. A function can have more variables. For example, g(x,y) = 2 &#8270; x + 3 &#8270; y. The important idea of a function is: variables are input, the function formula gives output.
+<p>
+In programming, a function also has a name, with input variables called parameters, and the formula is replaced by a body of instructions, giving output action. The parameters, like variables, are symbols to be substituted in the body to produce specific actions. Let's see this in Python.
+<p>
+Remove the for-loop, and define a drawSquare function, with turtle and size as parameters:
+<pre>
+# draw square for turtle, with size
+def drawSquare(turtle, size):
+   for j in range(4):
+      turtle.fd(size)
+      turtle.lt(90)
+</pre>
+In Python, <b>def</b> is the keyword to signify the definition of a function. After specifying the name with parameters in brackets, a colon (:) terminates this declaration. This is followed by an indented body of the definition, which is the previous for-loop, but using the parameter turtle instead of bob. The forward movement takes the parameter size, so that drawSquare(turtle, size) can be applied to any turtle and draws a square of any size.
+<p>
+After typing in this definition, add a blank line, and invoke it by this line:
+<pre>
+drawSquare(bob, 100)
+</pre>
+This means drawSquare(turtle, size) is applied with actual parameters turtle = bob, and size = 100. Run this code, and surely bob draws the same square. Change this line to:
+<pre>
+drawSquare(bob, 150)
+</pre>
+and bob draws a bigger square. We can go on to teach bob to draw a picture building from squares. Before we do that, we would like to convert this function to a method for the object.
+
+<h2>Using a Method</h2>
+Recall that the turtle bob is an object. An object responds to its methods. For example, bob.fd(100) means bob responds to the method forward, with a step size 100. Therefore, methods are functions attached to an object, for an object to respond to.
+<p>
+Wouldn't it be nice if we can write bob.square(100), so that bob can respond to a method with step size 100, by itself? Maybe we can teach bob other methods, so that eventually bob can respond and draw a beautiful picture for us!
+<p>
+In Python, there are several ways to do this. One way is to reuse our code drawSquare:
+<pre>
+# cast method for object
+bob.square = drawSquare.__get__(bob)
+</pre>
+Remove the line 'drawSquare(bob, 150)', and type in the lines above.
+The line means we set a method square for bob, which is the function drawSquare with the first parameter turtle substituted by bob. Thus bob.square needs only 1 parameter, the size of the square.
+We can test this by:
+<pre>
+bob.square(100)
+</pre>
+Run it, and now bob draws a square by itself, responding to its own method.
+
+<h2>Compose a Picture</h2>
+Comment out the test 'bob.square(100)' by inserting a # at the very start.
+Type in the following lines, and see if you can imagine what a turtle will draw as a result:
+<pre>
+# draw a picture
+def drawPicture(turtle, size):
+   for j in range(36):
+      turtle.square(size)
+      turtle.lt(10)
+</pre>
+The body of the for-loop tell a turtle to draw a square, then turn left by 10 degrees. The for-loop will repeat the body 36 times, thus the turtle will turn 36 &#8270; 10 = 360 degrees, a full circle. Can you figure out the final picture?
+<p>
+Before we test this, we can convert this function into a method by the same trick above:
+<pre>
+# cast method for object
+bob.picture = drawPicture.__get__(bob)
+</pre>
+Now we test this by running:
+<pre>
+bob.picture(100)
+</pre>
+Does the picture match what you expect?
+
+<!--
+
+import turtle
+bob = turtle.Turtle()
+bob.shape("turtle") # 'arrow', 'turtle', 'circle', 'square', 'triangle', 'classic'.
+bob.speed(10) # 0 is fastest, 10 = fast, 6 = normal
+
+bob.fd(100)
+bob.lt(90)
+bob.fd(100)
+
+# replace by
+for j in range(4):
+   bob.fd(100)
+   bob.lt(90)
+
+# draws a square
+
+# define a function
+# draw square for turtle, with size
+def drawSquare(turtle, size):
+   for j in range(4):
+      turtle.fd(size)
+      turtle.lt(90)
+
+# testing
+drawSquare(bob, 100)
+bob.lt(10)
+drawSquare(bob, 100)
+
+# show methods of bob in console
+dir(bob)
+
+# reset object
+bob.clear()
+
+# draw a picture
+def drawPicture(turtle, size):
+   for j in range(36):
+      drawSquare(turtle, size)
+      turtle.lt(10)
+
+# check the code
+drawPicture(bob, 100)
+
+# cast method for object
+bob.square = drawSquare.__get__(bob)
+
+bob.clear()
+bob.square(50)
+bob.square(100)
+
+# cast method for object
+bob.picture = drawPicture.__get__(bob)
+
+bob.clear()
+bob.picture(100)
+
+# replace above
+turtle.Turtle.square = drawSquare.__get__(turtle)
+bob.square(100) # works, but very slow!
+
+turtle.Turtle.picture = drawPicture.__get__(turtle)
+bob.picture(100) # works, but very slow!
+
+bob.square = drawSquare.__get__(bob)
+bob.picture = drawPicture.__get__(bob)
+bob.picture(100) # very fast!
+# now works, method put in class? very slow!
+# alice = turtle.Turtle()
+# alice.picture(100)
+
+dir(bob) # the methods
+bob.circle(100)
+
+def flower(turtle, size):
+   for j in range(18):
+       turtle.circle(size)
+       turtle.lt(20)
+
+bob.flower = flower.__get__(bob)
+
+bob.color('pink')
+bob.flower(100)
+
+>>>>>>
+
+import turtle
+
+def draw_circle(turtle, color, size, x, y):
+    turtle.penup()
+    turtle.color(color)
+    turtle.fillcolor(color)
+    turtle.goto(x,y)
+    turtle.begin_fill()
+    turtle.circle(size)
+    turtle.end_fill()
+    turtle.pendown()
+
+tommy = turtle.Turtle()
+tommy.shape("turtle")
+tommy.speed(500)
+
+draw_circle(tommy, "green", 50, 25, 0)
+draw_circle(tommy, "blue", 50, 0, 0)
+draw_circle(tommy, "yellow", 50, -25, 0)
+
+-->
+
+<h2>Turtle Documentation</h2>
+The turtle bob is an object, and it responds to methods of two types:
+<ul>
+<li>built-in methods: like shape(type), speed(value), fd(step), lt(degree), etc.</li>
+<li>user-defined methods: like square(size), picture(size).</li>
+</ul>
+To find out all methods attached to object bob, first we need to run our code in the console mode.
+This is achieved by clicking the drop-down ▽ (next to ▷), and choose 'Console', and the icon for 'run' changes to that of the console. Meanwhile, you can read some output in another window, ending with:
+<pre>
+>>>
+</pre>
+This shows up in color green, and represents the console prompt, waiting for some input text here.
+Now if you place the cursor after the green prompt, and type:
+<pre>
+dir(bob)
+</pre>
+The console window will give the following output (you can resize the console window):
+<pre>
+>>> dir(bob)
+['__eq__', '__format__', '__ge__', '__get__', '__getattribute__', '__gt__', '__hash__',
+ '__init__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__repr__',
+ '__setattr__', '__str__', 'back', 'backward', 'begin_fill', 'bk', 'circle', 'clear',
+ 'clone', 'color', 'degrees', 'delay', 'distance', 'done', 'dot', 'down', 'end_fill',
+ 'fd', 'fill', 'fillcolor', 'forward', 'getpen', 'getscreen', 'getturtle', 'heading',
+ 'hideturtle', 'home', 'ht', 'isdown', 'isvisible', 'left', 'lt', 'mainloop', 'onclick',
+ 'ondrag', 'onrelease', 'pd', 'pencolor', 'pendown', 'pensize', 'penup', 'picture',
+ 'pos', 'position', 'pu', 'radians', 'reset', 'right', 'rt', 'seth', 'setheading',
+ 'setpos', 'setposition', 'setundobuffer', 'setx', 'sety', 'shape', 'showturtle',
+ 'speed', 'square', 'st', 'stamp', 'towards', 'tracer', 'undo', 'undobufferentries',
+ 'up', 'update', 'width', 'window_height', 'window_width', 'write', 'xcor', 'ycor']
+</pre>
+The command <b>dir</b> gives the directory of object bob. The output is a list of methods known to bob.
+Only picture and square are user-defined methods, all others are built-in methods.
+There are some method aliases: fd as forward, lt as left, bk as back and backwards, rt as right, etc.
+<p>
+If you examine the build-in methods for bob, there is this one: circle. To find out its parameter, we need to check out the full documentation of the module turtle.
+<p>
+Click the question mark "?" button (next to ▽) for a list of available modules for Trinkets Python, in a new tab.
+Click "turtle" to find a list of built-in methods for turtles, with details.
+Locate the method circle, and find its signature circle(radius) -- ignore the optional arguments for now.
+<p>
+Scroll down a bit to find also the method color, and some examples of using it.
+<p>
+Back to the Python tab, we can change the drawPicture code by commenting out a line, and inserting another line:
+<pre>
+      # turtle.square(size)
+      turtle.circle(size)
+</pre>
+Also, add this line before 'bob.picture(100)', so that they become:
+<pre>
+bob.color('pink')
+bob.picture(100)
+</pre>
+If you have resized the console window, resize it again to as low as possible.
+Now change the 'Console' back to just 'Run' using the drop-down ▽, and see the result on the drawing board. Isn't that beautiful?
+
+<h2>Epilog</h2>
+Flip to the Documentation tab, and find a big blue button 'Example'.
+Click it for a demo. See the picture on the right.
+Now read the Python code on the left. You should be able to figure out how the picture is produced.
+<p>
+You can find the official Turtle Graphics documentation at【2】, and source code in【3】. They give the background and history of this module. Although the source code is not easy to understand, note that it is a single file, entirely written in standard Python.
+<p>
+More examples of turtle graphics can be found in Allen B. Downey's 
+<i>Think Python: How to think like a computer scientist </i>【4】, chapter 4.
+<p>
+Happy Python coding, with turtles!
+
+<!--
+
+import turtle
+import math
+import random
+wn = turtle.Screen()
+wn.bgcolor('black')
+Albert = turtle.Turtle()
+Albert.speed(0)
+Albert.color('white')
+rotate=int(360)
+def drawCircles(t,size):
+    for i in range(10):
+        t.circle(size)
+        size=size-4
+def drawSpecial(t,size,repeat):
+  for i in range (repeat):
+    drawCircles(t,size)
+    t.right(360/repeat)
+drawSpecial(Albert,100,10)
+Steve = turtle.Turtle()
+Steve.speed(0)
+Steve.color('yellow')
+rotate=int(90)
+def drawCircles(t,size):
+    for i in range(4):
+        t.circle(size)
+        size=size-10
+def drawSpecial(t,size,repeat):
+    for i in range (repeat):
+        drawCircles(t,size)
+        t.right(360/repeat)
+drawSpecial(Steve,100,10)
+Barry = turtle.Turtle()
+Barry.speed(0)
+Barry.color('blue')
+rotate=int(80)
+def drawCircles(t,size):
+    for i in range(4):
+        t.circle(size)
+        size=size-5
+def drawSpecial(t,size,repeat):
+    for i in range (repeat):
+        drawCircles(t,size)
+        t.right(360/repeat)
+drawSpecial(Barry,100,10)
+Terry = turtle.Turtle()
+Terry.speed(0)
+Terry.color('orange')
+rotate=int(90)
+def drawCircles(t,size):
+    for i in range(4):
+        t.circle(size)
+        size=size-19
+def drawSpecial(t,size,repeat):
+    for i in range (repeat):
+        drawCircles(t,size)
+        t.right(360/repeat)
+drawSpecial(Terry,100,10)
+Will = turtle.Turtle()
+Will.speed(0)
+Will.color('pink')
+rotate=int(90)
+def drawCircles(t,size):
+    for i in range(4):
+        t.circle(size)
+        size=size-20
+def drawSpecial(t,size,repeat):
+    for i in range (repeat):
+        drawCircles(t,size)
+        t.right(360/repeat)
+drawSpecial(Will,100,10)
+
+Put Interactive Python Anywhere on the Web
+https://trinket.io/python
+
+turtle — Turtle graphics
+https://docs.python.org/3/library/turtle.html
+
+turtle — Turtle graphics
+Source code: Lib/turtle.py
+https://github.com/python/cpython/tree/3.9/Lib/turtle.py
+
+Python for Data Analysis, 2nd Edition
+https://github.com/wesm/pydata-book
+Materials and IPython notebooks for "Python for Data Analysis" by Wes McKinney, published by O'Reilly Media.
+Wes McKinney
+https://github.com/wesm
+Creator of Python pandas. Co-creator Apache Arrow. 
+
+The book is from Allen B. Downey’s site
+http://greenteapress.com/wp/think-python-2e/
+Download the free PDF book "Think Python: How to think like a computer scientist".
+
+-->
+
+<h2>Links</h2>
+<ul>
+<li>【1】Trinkets: Put Interactive Python Anywhere on the Web<br>
+<a href="https://trinket.io/python">https://trinket.io/python</a><br>
+Running Python in a browser, with editor and graphics display.
+<p>
+</li>
+<li>【2】turtle — Turtle graphics<br>
+<a href="https://docs.python.org/3/library/turtle.html">https://docs.python.org/3/library/turtle.html</a><br>
+Turtle Graphics in Python full documentation.
+<p>
+</li>
+<li>【3】Source Code: Turtle graphics<br>
+<a href="https://github.com/python/cpython/tree/3.9/Lib/turtle.py">https://github.com/python/cpython/tree/3.9/Lib/turtle.py</a><br>
+Python source code of Turtle Graphics in GitHub.
+<p>
+</li>
+<li>【4】Think Python 2nd Edition by Allen B. Downey<br>
+<a href="http://greenteapress.com/wp/think-python-2e/">http://greenteapress.com/wp/think-python-2e/</a><br>
+Download the PDF book. Read the preface for the book's story. The author actually wrote the first draft in Java. Someone took his Java book and turned it into a Python book for teaching, and sent the Python copy to him as courtesy. Later he was asked to teach a Python class, so the author learnt Python by reading an almost-his-own book!
+<p>
+</li>
+<!-- end of links -->
+</ul>
+
+
+
+<hr>
+<!-- https://jhlchan.github.io/turtle/python.html -->
+</body>
+</html>
