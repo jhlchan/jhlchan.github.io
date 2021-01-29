@@ -1,0 +1,509 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption -- Part 3</TITLE>
+<SCRIPT LANGANGE="Javascript">
+<!-- Hide from other browers
+
+ASCII = " !" + '"' + "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ"
+
+// ascii -- return ASCII code of a character
+function ascii(c) {
+
+   return 32 + ASCII.indexOf(c)
+}
+
+// charOf -- return character given an ASCII code
+function charOf(n) {
+
+   return ASCII.charAt(n-32)
+}
+
+// decimal -- convert a list of symbols to ASCIIs, in decimal
+function decimal(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += ascii(m.charAt(j)) + ' '
+
+   return s
+}
+
+// decToBinary -- convert decimal to n-bit binary
+function decToBinary(x,n) {
+   var s = ''
+
+   for (var j = 0; j < n; j++) {
+      s = x%2 + s
+      x = Math.floor(x/2)
+   }
+
+   return s
+}
+
+// binary -- convert a list of symbols to ASCIIs, in binary
+function binary(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += decToBinary(ascii(m.charAt(j)),8) + ' '
+
+   return s
+}
+
+// noBlank -- remove blanks from a message
+function noBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) if (m.charAt(j) != ' ') s += m.charAt(j)
+
+   return s
+}
+
+// addBlank -- add blanks between characters
+function addBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ' '
+
+   return s
+}
+
+// chop -- chop stream by n bytes
+function chop(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ((j+1)%n == 0 ? ' ' : '')
+
+   return s
+}
+
+// number -- express a stream of binary n-bytes by numbers
+function number(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += parseInt(m.substr(j,n),2) + ' '
+
+   return s
+}
+
+// pack -- pack a list of numbers into n-bit binary
+function pack(m,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += decToBinary(parseInt(m.substr(0,j)),n)
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// read -- read a stream of bits as n-bit binaries, and convert to ASCII
+function read(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += charOf(parseInt(m.substr(j,n),2))
+
+   return s
+}
+
+// format -- format a string to the required width
+function format(s,w) {
+
+   while (s.length < w) s = ' ' + s
+
+   return s
+}
+
+// range -- range of numbers when chopped by b-bits
+function range(b) {
+   var c = Math.pow(2,b)
+
+   return '2^' + b + '=' + c + ' numbers, from 0 to ' + (c-1) + '.'
+}
+
+// getChop -- get the chop bits value for modulo n
+function getChop(n) {
+   return Math.floor(Math.log(n)/Math.log(2)) // 2^j less than n
+}
+  
+// keygen -- generate the keys from any modulo
+function keygen(form) {
+   var n = eval(form.modulo.value)
+
+   e = Math.floor(n*Math.random())
+   if (e == 0) e = Math.floor(n/3)
+   d = n - e
+
+   form.pubkey.value = e     // public is a reserved word in JavaScript
+   form.prvkey.value = d     // private is a reserved word in JavaScript
+   form.chop.value = getChop(n)
+}
+
+// setkey -- set the keys from a single modulo key
+function setkey(form) {
+   form.pubkey.value = eval(form.key.value)
+   form.prvkey.value = -eval(form.key.value)
+   form.chop.value = getChop(eval(form.modulo.value))
+}
+
+// addModulo -- perform modulo addition a+b % n, handles subtraction also
+function addModulo(a,b,n) {
+   var c = (a+b)%n   // JavaScript % operator gives result from -(n-1) to +(n-1)
+   if (c < 0) c += n // make result positive
+   return c
+}
+
+// caesar -- take modulo addition of a list of numbers: m+b % n
+function caesar(m,b,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += addModulo(parseInt(m.substr(0,j)),b,n) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// showCaesar -- show Caesar cipher with key pair (e,n) and (d,n)
+function showCaesar(m,b,n,e,d,ispair) {
+   if (Math.pow(2,b) > n) {
+      alert('Chop value ' + b + ' is too large!')
+      return '2^' + b + '=' + Math.pow(2,b) + ' > ' + n + ', the modulo' + '\n'
+   }
+   while (8*m.length % b != 0) m += '~' // extends message
+
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = caesar(s1,e,n)
+   var s3 = caesar(s2,d,n)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits: there are ' + range(b) + '\n' +
+          'Modulo ' + n + ',' + 
+   ' Encode' + (ispair? ' key=(' + e + ',' : ': (add ' + e + ' mod ') + n + '),' +
+   ' Decode' + (ispair? ' key=(' + d + ',' : ': (subtract ' + e + ' mod ') + n + ').\n' +
+'from  NUMBER to ENCODE: each number add ' + e + ', then take modulo ' + n + '.\n' +
+'from RECEIVE to DECODE: each number add ' + d + ', then take modulo ' + n + '.\n\n' + 
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// explain -- pops up an explanation with title t and body b
+function explain(t,b) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>" + b + "</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainChop -- pops up an explanation of bits-chopping with title t
+function explainChop(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<TABLE width=100%>")
+   popup.document.writeln("<TR><TH align=LEFT>Chop size<TH align=LEFT>Chop numbers</TR>")
+   popup.document.writeln("<TR><TD>5-bits<TD>from 0 to 31</TR>")
+   popup.document.writeln("<TR><TD>6-bits<TD>from 0 to 63</TR>")
+   popup.document.writeln("<TR><TD>7-bits<TD>from 0 to 127</TR>")
+   popup.document.writeln("<TR><TD>8-bits<TD>from 0 to 255</TR>")
+   popup.document.writeln("<TR><TD>9-bits<TD>from 0 to 511</TR>")
+   popup.document.writeln("<TR><TD>10-bits<TD>from 0 to 1023</TR>")
+   popup.document.writeln("</TABLE>")
+   popup.document.writeln("<FORM>If chop size is <INPUT type='text' name='bits' value=5 size=3 onChange='this.form.nums.value=self.prev.range(eval(this.form.bits.value))'>-bits, you have: (change chop size and click elsewhere)<BR><INPUT type='text' name='nums' value='2^5=32 numbers, from 0 to 31.' size=55><BR></FORM>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// explainNegative -- pops up an explanation of negative modulo numbers with title t
+function explainNegative(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("In ordinary math, you can view a subtraction as addition with a negative number:")
+   popup.document.writeln("<pre>   a - b = a + (-b)</pre>")
+   popup.document.writeln("In cyclic math, it turns out that any \"negative\" number can be made positive, via cyclic subtraction:")
+   popup.document.writeln("<pre>   -b mod n = (0 - b) mod n = (n - b) mod n</pre>")
+   popup.document.writeln("To undo a cyclic addition, you can do cyclic subtraction. But cyclic subtraction is cyclic addition with \"negative\" number, and you can turn that negative number into a positive number.")
+   popup.document.writeln("Therefore, we can undo a cyclic addition by another cyclic addition. Strange as this may sound, this is entirely possible in the cyclic world.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainCaesar -- pops up an explanation of Caesar cipher with title t
+function explainCaesar(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>About 2000 years ago the Romans ruled its empire with a strong army. Orders from the emperor, Caesar, were transmitted by horsemen. How to keep the message secret as it passed from hand to hand?")
+   popup.document.writeln("<P>The solution of Caesar is legendary: replace each alphabet by the next one. For example, replace A by B, B by C, C by D, etc. Of course, you'll have to replace Z by A. This is shifting every alphabet forward by 1, in a cyclic manner.")
+   popup.document.writeln("<P>To recover the message, all you need is to reverse the operation: shifting every alphabet backwards by 1, in a cyclice manner.")
+   popup.document.writeln("<P>Today, encryption using cyclic addition is known as <b>Caesar cipher</b>. As you may guess, this particular method is not very secure. Other more complicated tricks have been developed since then, but they all involve using a key that must be kept secret. How to distribute the secret key reliably is known as the <i>key-distribution problem</i>.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// exampleWeekdays -- pops up an example of Weekdays using cyclic math with title t
+function exampleWeekdays(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=550,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>There are 7 days in a week, so what is the day after Sunday?")
+   popup.document.writeln("<P>It is Monday, which is weedkday 1, not weekday 8. Then comes Tuesday, which is weekday 2, etc. This is because weekdays come in cycles, with a cycle length of 7. We can count Sunday as weekday 7, or weekday 0, and represent the weekday cycle in a line:")
+   popup.document.writeln(
+   "<pre>" +
+   "weekday: 0      1      2      3      4      5      6      7\n" +
+   "         +------+------+------+------+------+------+------+\n" +
+   "        Sun    Mon    Tue    Wed    Thu    Fri    Sat    Sun\n" +
+   "</pre>")
+   popup.document.writeln("To see the cycle, either you can imagine bending the line into a circle, putting weekday 7 (the right end) on the weekday 0 (the left end), or you can just think of weekday 7 is the same as weekday 0. There are no ends -- they are the same. This means that if you step along the line from the left and hit the right end, you just \"mysteriously\" re-emerge from the left end. If you are familiar with computer games, you'll find this natural: this is how to create a cycle on a flat screen.")
+   popup.document.writeln("<P>What is 5 days after weekday 4?")
+   popup.document.writeln("<P>You can answer this question by starting at weekday 4, and go forward (to the right) by 5 steps. Remember there are no endings. You'll land on weekday 2, which is Tuesday.")
+   popup.document.writeln("<P>A math person can compute this result by: first add 5 to 4, giving 9, then divide by the cyclic length 7, taking the remainder 2 as the answer. The whole computation is written as:")
+   popup.document.writeln(
+   "<pre>" +
+   "   (4 + 5) mod 7 = 9 mod 7 = 2\n" +
+   "</pre>")
+   popup.document.writeln("The symbol mod denotes modulo, the math-term for cycle. Here it effectively says \"take the remainder of division by ... \". Cyclic arithmetic is interested only in the remainder. Since division by cyclic length 7 always gives a remainder from 0 to 6, cyclic arithmetic always keeps numbers within a range.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// exampleSubtraction -- pops up an example of Weekdays using cyclic math with title t
+function exampleSubtraction(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=550,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>The 7 weekdays can be represented as a cycle in a line (right-end = left-end):")
+   popup.document.writeln(
+   "<pre>" +
+   "weekday: 0      1      2      3      4      5      6      7\n" +
+   "         +------+------+------+------+------+------+------+\n" +
+   "        Sun    Mon    Tue    Wed    Thu    Fri    Sat    Sun\n" +
+   "</pre>")
+   popup.document.writeln("<P>What is 5 days before weekday 4?")
+   popup.document.writeln("<P>If addition is stepping to the right along the line, subtraction is stepping to the left. Starting at weekday 4, and go backward (to the left) by 5 steps. There are no ends, and you'll land on weekday 6, which is Saturday.")
+   popup.document.writeln("<P>A math person can compute this result by: first subtract 5 from 4, giving -1. To convert this negative result to a positive one, add the cyclic length 7: that is, -1 + 7 = 6, since 0 and 7 are the same in this cyclic system. The whole computation is written as:")
+   popup.document.writeln(
+   "<pre>" +
+   "   (4 - 5) mod 7 = -1 mod 7 = 6\n" +
+   "</pre>")
+   popup.document.writeln("Indeed, if you do the old-school-days division of -1 by 7, and you want the smallest positive remainder, you'll need to put in a quotient of 1:")
+   popup.document.writeln(
+   "<pre>" +
+   "         1\n" +
+   "     -----\n" +  
+   "   7 |  -1\n" +
+   "         7\n" +
+   "        --\n" +
+   "         6\n" +   
+   "</pre>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// asciiConverter -- pops up an ASCII converter
+function asciiConverter() {
+   var popup = window.open("","ASCII","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Converter</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a symbol: <INPUT type='text' name='ch' size='1' value='%'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=self.prev.ascii(this.form.ch.value);this.form.bin.value=self.prev.decToBin(self.prev.ascii(this.form.ch.value))'><BR>")
+   popup.document.writeln("ASCII value in decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("ASCII value in binary: <INPUT type='text' name='bin' size='9' value='00100101'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiDecoder -- pops up an ASCII decoder
+function asciiDecoder() {
+   var popup = window.open("","DECODE","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Decoder</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a binary: <INPUT type='text' name='bin' size='9' value='00100101'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=parseInt(this.form.bin.value,2);this.form.ch.value=self.prev.charOf(parseInt(this.form.bin.value,2))'><BR>")
+   popup.document.writeln("Binary as decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("Binary as symbol: <INPUT type='text' name='ch' size='1' value='%'><BR>")
+   popup.document.writeln("<P>Binary must be a valid 8-bit ASCII code to see a symbol.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// modAddCalculator -- pops up an Modulo Add calculator
+function modAddCalculator() {
+   var popup = window.open("","MODADD","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>Modulo Addition Calculator</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Modulo n: <INPUT type='text' name='n' size='5' value='32'><BR>")
+   popup.document.writeln("Number a: <INPUT type='text' name='a' size='5' value='21'>")
+   popup.document.writeln("Number b: <INPUT type='text' name='b' size='5' value='17'><BR>")
+   popup.document.writeln("a+b mod n: <INPUT type='text' name='z' size='5' value='6'>")
+   popup.document.writeln("<INPUT type='button' value='COMPUTE' onClick='this.form.z.value=self.prev.addModulo(eval(this.form.a.value),eval(this.form.b.value),eval(this.form.n.value))'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+//-- End hiding -->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption -- Part 3: Cyclic Add</H2>
+<HR>
+<H3><a name="TOC">Table of Content</a></H3>
+<UL type="square">
+<LI><a href="#Section1">Counting in a cycle</a>
+<LI><a href="#Section2">Reverse by going forward</a>
+<LI><a href="#Section3">A Pair of Keys</a>
+<LI><a href="#Section4">Symmetric and Asymmetric</a>
+<LI><a href="#Section5">How good is cyclic add encryption?</a>
+</UL>
+<H3><a name="Section1">Counting in a cycle</a></H3>
+<P>
+We have seen how addition be used in encoding. To prevent the result from getting bigger and bigger, we can use cyclic addition. We choose a cycle length, and call this n. Every time a result goes beyond n, we simply divide the result by n, keeping only the remainder. The remainder of division by n is always a number less than n. This, as you'll see, is important for improving our previous encoding schemes.
+<P>
+The technical term for cyclic math is <b>modular</b> arithmetic, and the cycle length n is called the <b>modulo</b>. We write: <pre> x mod n</pre> to mean the remainder of number x divided by n.
+<P>
+The best way to represent a cyclic world is a circle, but we can use a linear diagram:
+<pre>
+    0      1      2      3      4      5      ...                         n
+    +------+------+------+------+------+------+------+------+------+------+
+</pre>
+As long as we treat the right-end (n) the same as the left-end (0), this is effectively a circle, or <i>cycle</i>: a world without ends.
+<P>
+An example of cyclic math being used in daily life is the <a href="javascript:exampleWeekdays('How to count weekdays')">counting of weekdays</a>.
+<P>
+We can modify our encoding by addition as follows:
+<UL>
+<LI>Pick a modulo n. Choose an constant key k.
+<LI>To each chop-up number x, we perform the cyclic addition: y = (x+k) mod n.
+<LI>We send the resulting numbers y as our encoded message.
+</UL>
+To decode the message, our partner needs to know the modulo n and the constant key k:
+<UL>
+<LI>To each recieving number y, partner performs the cyclic subtraction: x = (y-k) mod n.
+<LI>This recovers each of the chop-up numbers x.
+<LI>Putting the chop-up numbers into a binary stream reveals the original message.
+</UL>
+Cyclic subtraction is the reverse of cyclic addition. Here is an <a href="javascript:exampleSubtraction('How to do cyclic subtraction')">example using weekdays</a>.
+<P>
+To apply cyclic addition to our encoding, we need to determine the chop size. Since chopping the data stream by chunks of b-bits means you get numbers <a href="javascript:explainChop('Chopping Up')">ranging</a> from 0 to 2<SUP>b</SUP>-1, we can take them as numbers in modulo n=2<sup>b</sup>. Or, if we have chosen the modulo n, we just take b such that 2<sup>b</sup> &lt; n. In math terms, b is the integer less than log<sub>2</sub>n.
+<P>Encoding by cyclic addition is sometimes called <a href="javascript:explainCaesar('What is Caesar Cipher?')">Casear cipher</a>. Let's see how this cyclic add can do encoding:<BR>
+<FORM name="main">
+Choose a Modulo: <INPUT type="text" name="modulo" size="15" value="391">
+Choose a Key: <INPUT type="text" name="key" size="12" value="135">
+<INPUT type="button" value="Set Key" onClick="setkey(this.form)"><BR>
+<INPUT type="hidden" name="pubkey" value="135">
+<INPUT type="hidden" name="prvkey" value="-135">
+<INPUT type="hidden" name="chop" value="8"><BR>
+<P>Type a message: <INPUT type="text" name="msg" value="My account is 3421." size="30">
+<INPUT type="button" value="Caesar" onClick="this.form.pad.value=showCaesar(this.form.msg.value,eval(this.form.chop.value),eval(this.form.modulo.value),eval(this.form.pubkey.value),eval(this.form.prvkey.value),false)"><BR>
+<TEXTAREA name="pad" rows="18" cols="90"> </TEXTAREA><BR>
+</FORM>
+You can verify the first step (from symbols to binary) by this <a href="javascript:asciiConverter()">ASCII converter</a>.<BR>
+You can verify the last step (from binary to symbols) by this <a href="javascript:asciiDecoder()">ASCII decoder</a>.
+<P>
+You can verify the calculations by this <a href="javascript:modAddCalculator()">Modulo Addition Calculator</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section2">Reverse by going forward</a></H3>
+<P>
+If you think of addition as taking steps forward, then subtraction is taking step backwards. Within ordinary math, going backwards is the only way to undo going forward. In the world of cyclic math, however, there is an alternative method:
+<pre>
+    0      1      2      3             e                                  n
+    +------+------+------+------+------+------+------+------+------+------+
+    
+    +---------------------------------->
+              e steps                                d steps
+                                       +---------------------------------->
+</pre>
+For a cyclic world of modulo n, the right end (n) is the same as the left end (0). After you have taken e steps forward, you can take a further d steps forward to reach the right end (n), which is the same as returning to the starting point (0). For the two sets of steps to undo each other, it is easy to see that:
+<pre>
+                  e + d = n
+
+         or       d = n - e
+</pre>
+<P>
+This is related to the fact that cyclic math deals with remainders: there are no <a href="javascript:explainNegative('No Negative')">negative numbers</a> (remember the <a href="javascript:explainChop('Chopping range')">range</a>?).
+<P> 
+Therefore, in cyclic arithmetic, you can cancel addition by another addition. This allows us to view encryption and decryption in a different light.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section3">A Pair of Keys</a></H3>
+<P>
+In cyclic arithmetic of modulo n, let us do encryption by the key e, that is, (add e, mod n).
+<BR>
+Then, we can do decryption by another key d, that is, (add d, mod n).
+<P>
+What we need to have is that (add e, mod n) and (add d, mod n) cancel each other.<BR>
+We can achieve this by taking d = n-e, for cyclic addition.
+<P>
+We call (e,n) the <b>encryption key</b>.<BR>
+We call (d,n) the <b>decryption key</b>.<BR>
+Both encryption and decryption use the <i>same</i> method: addition modulo n.
+<P>
+Note that we can swap the keys: they are just inverses with respect to the underlying method (cyclic addition) which is identical in both encryption and decryption.
+<P>
+Let's see how this coding scheme works. Here you can choose a modulo n. When you click the "Generate" button, a pair of keys will be generated: one is e, the other is d = n-e. The chop-size b-bits is determined by the modulo chosen. Then press the button "Casear Again" and scroll up to view how the message is encoded/decoded by this pair of keys.
+<FORM>
+Choose a Modulo: <INPUT type="text" name="modulo" size="15" value="391">
+<INPUT type="button" value="Generate" onClick="keygen(this.form)"><BR>
+Encode: <INPUT type="text" name="pubkey" size="12" value="135">
+Decode: <INPUT type="text" name="prvkey" size="12" value="256">
+Chop stream into <INPUT type="text" name="chop" size="5" value="8">-bits binary.
+<INPUT type="button" value="Caesar Again" onClick="document.main.pad.value=showCaesar(document.main.msg.value,eval(this.form.chop.value),eval(this.form.modulo.value),eval(this.form.pubkey.value),eval(this.form.prvkey.value),true)"> (scroll up to view result.)<BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section4">Symmetric and Asymmetric</a></H3>
+<P>
+Let's take a look at these two ways to encode using cyclic addition:
+<UL>
+<LI>Given a modulo n and a key k, you can:
+   <UL>
+   <LI>encode by (add k mod n),
+   <LI>decode by (subtract k mod n).
+   </UL>
+   This is called <b>symmetric encryption</b>: <i>one</i> key, and applying <i>opposite</i> methods.
+<P>
+<LI>Given a modulo n, a pair of keys (e,n) and (d,n) can be generated. One can:
+   <UL>
+   <LI>encode by (add d mod n),
+   <LI>decode by (add e mod n).
+   </UL>
+   Both encoding and decoding apply the same method: add key mod n.<BR>
+   This is called <b>asymmetric encryption</b>: a <i>pair</i> of keys, but applying the <i>same</i> method.
+</UL>
+This cyclic addition encoding is the only scheme where we can look at it in two ways, either as <i>symmetric</i> or <i>asymmetric</i> encoding. As we improve our schemes within the cyclic world, you'll find asymmetric encoding becoming more and more important.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section5">How good is cyclic add encryption?</a></H3>
+<P>
+We need to improve this scheme using cyclic addition, because of the following weakness.
+<P>
+If someone knows the encode key (e,n), the decode key (d.n) can be easily deduced. In this case of cyclic addition, d = n-e. As a result, he/she can read any encoded message sent according to this method. Because of this weakness, we must keep both keys secret.
+<P>
+Is there a way to make the deduction of the <i>decode key</i> difficult even if the <i>encode key</i> is exposed? If this is possible, we can just keep one key secret.
+<P>
+We shall investigate this possibility in the <a href="pkey004.html">next</a> part: cyclic multiply encoding.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<HR>
+Back to <a href="pkey.html">home</a>.
+</BODY>
+</HTML>

@@ -1,0 +1,203 @@
+<html>
+<head>
+<title>Sieve of Eratosthenes</title>
+<script type="text/javascript">
+<!-- Hide from other browers
+
+// Startup ----------------------------------------------------------
+
+var map = []; // map value to display cells
+
+// request size
+var n = prompt("Primes up to: ", 100);
+var max = parseInt(n); // max value
+if (isNaN(max) || max < 2) {
+    alert("Input ("+n+") ignored, put n=100.");
+    max = 100;
+}
+var colMax = 20; // horizontal count (columns)
+var rowMax = Math.ceil(max/colMax); // vertical count (rows)
+
+function startup() {
+    // map all cells and put value
+    for (var k = 1; k <= max; k++) {
+        map[k] = document.getElementById('cell.'+k);
+        map[k].value = k;
+    }
+    // 1 is not prime
+    map[1].value = '';
+}
+
+// value at (i,j)
+function toValue(i, j) {
+    return colMax*(i-1)+j;
+}
+
+
+// End Startup ------------------------------------------------------
+
+// Action Handler ---------------------------------------------------
+
+var value; // current value (to start sieve)
+var multiple; // current multiple of value
+var count; // count of eliminations
+var timer; // timer
+var wait = 1; // wait time in milliseconds
+var waiting = false; // can click
+
+// sieve multiples after number k
+function sieve(k) {
+    if (waiting || map[k].value == '') return; // no action
+    multiple = value = k; // initial value and multiple
+    count = 0; // count eliminations
+    multiple += value;
+    eliminate(multiple);
+}
+
+// eliminate this multiple
+function eliminate(multiple) {
+    if (multiple <= max) {
+        waiting = true; // no click
+        map[multiple].focus();
+        map[multiple].select();
+        timer = setTimeout("next()", wait);
+    }
+    else {
+        map[value].onfocus = null; // no repeat click
+        map[value].focus();
+        map[value].select();
+        map[value].style.color = 'black';
+        map[value].style.fontWeight = 'bold';
+        if (count == 0) done();
+    }
+}
+
+// next elimination
+function next() {
+    clearTimeout(timer);
+    waiting = false; // can click
+    if (map[multiple].value != '') {
+        map[multiple].value = ''; // clear the cell to be eliminated
+        count++;
+    }
+    multiple += value;
+    eliminate(multiple);
+}
+
+// done elimination
+function done() {
+    // check if all less are primes
+    for (var k = 1; k < value; k++) {
+        if (map[k].value != '' && map[k].style.fontWeight != 'bold') return;
+    }
+    // alert("What remains are all primes.");
+    // count the primes
+    count = 0;
+    for (var k = 1; k <= max; k++) {
+        if (map[k].value != '') {
+            map[k].style.color = 'black';
+            map[k].style.fontWeight = 'bold';
+            count++;
+        }
+    }
+    // independent sieve to get all primes
+    document.getElementById('primediv').onclick();
+    var list = document.getElementById('primediv').innerHTML.split(' ');
+    if (list.length == count) {
+        var s = document.getElementById('primediv').innerHTML;
+        document.getElementById('primediv').innerHTML =
+            '' + count + ' primes &le; '+max+':<br>'+s.replace(/ /g, ', ')+'.';
+    }
+    else {
+        alert("Primes different by another sieve! count="+count+", list="+list.length);
+    }
+}
+
+// End Action Handler. ----------------------------------------------
+
+//-- End hiding -->
+</script>
+<style type="text/css">
+input {background-color: #fffff0; color: #008800; font-family: "Georgia"; text-align: right;}
+</style>
+</head>
+<body onload="startup()" bgcolor="#c0d0ff" style="font-family: Georgia">
+<center>
+<h2>Sieve of Eratosthenes</h2>
+<form>
+<table border="0" cellspacing="0" cellpadding="0">
+<script type="text/javascript">
+<!-- Hide from other browers
+    for (var i = 1; i <= rowMax; i++) {
+        document.write('<tr>');
+        for (var j = 1; j <= colMax; j++) {
+            var k = toValue(i,j);
+            if (k <= max) {
+                var id = 'cell.'+k;
+                var cell = '<input id="'+id+'" '+
+                           'type=text style="width:30px" maxlength=3 onfocus="sieve('+k+')">';
+                document.write('<td>' + cell + '</td>');
+            }
+            else {
+                document.write('<td></td>');
+            }
+        }
+        document.write('</tr>');
+    }
+//-- End hiding -->
+</script>
+</table>
+</form>
+</center>
+<script type="text/javascript">
+<!-- Hide from other browers
+
+/* Sieve Of Erathosthenes by Denis Sureau */
+
+function Eratosthenes(element, top) {
+    var all = new Array;
+    var idx = 0;
+    var prime = 3;
+    var x, j;
+
+    element.innerHTML = "2";
+
+    while (prime <= top) {
+        var flag = true;
+        for (x = 0; x < top; x++) {
+            if (all[x] == prime) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            element.innerHTML += " " + prime;
+            j = prime;
+            while (j <= (top / prime)) {
+                all[idx++] = prime * j;
+                j += 1;
+            }
+        }
+        prime += 2;
+    }
+    return;
+}
+
+// prime spectrum
+function spectrum(m) {
+    var element = document.getElementById('primediv');
+    element.onclick();
+    var list = document.getElementById('primediv').innerHTML.split(' ');
+    var b = [];
+    for (var j = 1; j <= max; j++) {b[j] = 0;}
+    for (var j = 0; j < list.length; j++) {b[list[j]] = 1; }
+    element.innerHTML = 'sparkline'+b.toString().substring(2*m).replace(/,/g, ' ');
+}
+
+//-- End hiding -->
+</script>
+<div id="primediv" onclick="Eratosthenes(this, max);">Click a number and its multiples will be removed ...</div>
+<!-- div onclick="spectrum(1600)">Get Spectrum after m ...</div -->
+<hr>
+</body>
+</html>

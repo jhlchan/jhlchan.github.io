@@ -1,0 +1,573 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption -- Part 4</TITLE>
+<SCRIPT LANGANGE="Javascript">
+<!-- Hide from other browers
+
+ASCII = " !" + '"' + "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ"
+
+// ascii -- return ASCII code of a character
+function ascii(c) {
+
+   return 32 + ASCII.indexOf(c)
+}
+
+// charOf -- return character given an ASCII code
+function charOf(n) {
+
+   return ASCII.charAt(n-32)
+}
+
+// decimal -- convert a list of symbols to ASCIIs, in decimal
+function decimal(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += ascii(m.charAt(j)) + ' '
+
+   return s
+}
+
+// decToBinary -- convert decimal to n-bit binary
+function decToBinary(x,n) {
+   var s = ''
+
+   for (var j = 0; j < n; j++) {
+      s = x%2 + s
+      x = Math.floor(x/2)
+   }
+
+   return s
+}
+
+// binary -- convert a list of symbols to ASCIIs, in binary
+function binary(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += decToBinary(ascii(m.charAt(j)),8) + ' '
+
+   return s
+}
+
+// noBlank -- remove blanks from a message
+function noBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) if (m.charAt(j) != ' ') s += m.charAt(j)
+
+   return s
+}
+
+// addBlank -- add blanks between characters
+function addBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ' '
+
+   return s
+}
+
+// chop -- chop stream by n bytes
+function chop(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ((j+1)%n == 0 ? ' ' : '')
+
+   return s
+}
+
+// number -- express a stream of binary n-bytes by numbers
+function number(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += parseInt(m.substr(j,n),2) + ' '
+
+   return s
+}
+
+// pack -- pack a list of numbers into n-bit binary
+function pack(m,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += decToBinary(parseInt(m.substr(0,j)),n)
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// read -- read a stream of bits as n-bit binaries, and convert to ASCII
+function read(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += charOf(parseInt(m.substr(j,n),2))
+
+   return s
+}
+
+// format -- format a string to the required width
+function format(s,w) {
+
+   while (s.length < w) s = ' ' + s
+
+   return s
+}
+
+// range -- range of numbers when chopped by b-bits
+function range(b) {
+   var c = Math.pow(2,b)
+
+   return '2^' + b + '=' + c + ' numbers, from 0 to ' + (c-1) + '.'
+}
+
+// getChop -- get the chop bits value for modulo n
+function getChop(n) {
+   return Math.floor(Math.log(n)/Math.log(2)) // 2^j less than n
+}
+  
+// gcd -- compute the greatest common divisor of two numbers
+function gcd(a,b) { // Euclidean algorithm
+
+   if (a == 0) return b
+
+   while (b != 0) { // this version is faster if a > b
+      r = a%b
+      a = b
+      b = r
+   }
+   return a
+}
+
+// primeTo -- find a number relatively prime to p
+function primeTo(p) {
+   do {
+      q = Math.floor(p * Math.random())   // random q < p
+      if (q%2 == 0) q++                   // ensure q is odd
+   } while ((q == 1) || (gcd(p,q) != 1))  // q is not 1, and q is prime to p
+
+   return q
+}
+
+// inverseOf -- inverse of b in mod a, when a, b are relatively prime
+function inverseOf(b,a) { // extended Euclidean algorithm of gcd(a,b)
+   u1 = 1; u2 = 0; u3 = a // invariant: u1*a + u2*b = u3
+   v1 = 0; v2 = 1; v3 = b // invariant: v1*a + v2*b = v3
+
+   while (v3 != 0) { // this version faster if a > b
+      q = Math.floor(u3/v3)
+      r1 = u1 - q*v1
+      r2 = u2 - q*v2
+      r3 = u3 - q*v3
+
+      u1 = v1; u2 = v2; u3 = v3
+      v1 = r1; v2 = r2; v3 = r3
+   }
+   // when v3=0, u3=gcd, u1*a + u2*b = gcd = 1, or u2*b = 1 mod a
+
+   if (u2 < 0) u2 = u2 + a // make u2 positive
+   return u2
+}    
+
+// keygenModulo -- generate the keys from any modulo
+function keygenModulo(form) {
+   var n = eval(form.modulo.value)
+
+   e = primeTo(n)
+   d = inverseOf(e,n)
+
+   form.pubkey.value = e     // public is a reserved word in JavaScript
+   form.prvkey.value = d     // private is a reserved word in JavaScript
+   form.chop.value = getChop(n)
+}
+
+// powerModulo -- compute Math.pow(a,b) % n  for positive b
+function powerModulo(a,b,n) {
+   g = 1;                          // g collects all the "odd" bits
+   while (b > 1) {
+      if (b%2 == 1) g = (g*a) % n; // when b is odd
+      a = (a*a) % n;               // squaring a
+      b = Math.floor(b/2);         // halving b
+   }
+   return (g*a) % n;
+}
+
+// keygenPrime -- generate the keys from prime modulo
+function keygenPrime(form) {
+   var p = eval(form.prime.options[form.prime.selectedIndex].value)
+   var e = eval(form.pubkey.value) // always have gcd(e,p) = 1
+
+   e = e % p  // make sure e is less than p
+   if (e == 0) {
+      alert("Encode key cannot be multiple of the prime modulo itself.\nA random encode key will be chosen for you.")
+      e = Math.floor(p*Math.random()/2) + 1
+   }
+   d = inverseOf(e,p)
+   f = powerModulo(e,p-2,p)
+
+   form.pubkey.value = e     // make sure e is less than p and valid
+   form.prvkey.value = d     // private is a reserved word in JavaScript
+   form.fermat.value = f     // should be the same as d
+   form.chop.value = getChop(p)
+}
+
+// multiplyModulo -- perform modulo multiplication
+function multiplyModulo(a,b,n) {
+   return (a*b)%n
+}
+
+// timesModulo -- compute a*b % n  accurately
+function timesModulo(a,b,n) {
+   if (a > b) { var t = a; a = b; b = t }  // keep a <= b
+   
+   if (b < 50000000)            // JavaScript precision limit 5*10^7
+      return (a*b)%n            // simple computation
+   else {                       // use recursion
+      var t = 2*timesModulo(a,Math.floor(b/2),n)%n  // t = a*2[half b]
+      return (b%2 == 1 ? (t + a)%n : t)       // a*(2[half b] + 1) = t + a
+   }
+}
+
+// fermat -- take modulo multiplication of a list of numbers: m*b % n
+function fermat(m,b,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += timesModulo(parseInt(m.substr(0,j)),b,n) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// showFermat -- show Fermat cipher with key pair (e,n) and (d,n)
+function showFermat(m,b,n,e,d) {
+   if (Math.pow(2,b) > n) {
+      alert('Chop value ' + b + ' is too large!')
+      return '2^' + b + '=' + Math.pow(2,b) + ' > ' + n + ', the modulo' + '\n'
+   }
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = fermat(s1,e,n)
+   var s3 = fermat(s2,d,n)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits: there are ' + range(b) + '\n' +
+          'Modulo ' + n + ',' + 
+          ' Encode key=(' + e + ',' + n + '),' +
+          ' Decode key=(' + d + ',' + n + ').\n' +
+'from  NUMBER to ENCODE: multiply each number by ' + e + ', then take modulo ' + n + '.\n' +
+'from RECEIVE to DECODE: multiply each number by ' + d + ', then take modulo ' + n + '.\n\n' + 
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// explain -- pops up an explanation with title t and body b
+function explain(t,b) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>" + b + "</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainChop -- pops up an explanation of bits-chopping with title t
+function explainChop(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<TABLE width=100%>")
+   popup.document.writeln("<TR><TH align=LEFT>Chop size<TH align=LEFT>Chop numbers</TR>")
+   popup.document.writeln("<TR><TD>5-bits<TD>from 0 to 31</TR>")
+   popup.document.writeln("<TR><TD>6-bits<TD>from 0 to 63</TR>")
+   popup.document.writeln("<TR><TD>7-bits<TD>from 0 to 127</TR>")
+   popup.document.writeln("<TR><TD>8-bits<TD>from 0 to 255</TR>")
+   popup.document.writeln("<TR><TD>9-bits<TD>from 0 to 511</TR>")
+   popup.document.writeln("<TR><TD>10-bits<TD>from 0 to 1023</TR>")
+   popup.document.writeln("</TABLE>")
+   popup.document.writeln("<FORM>If chop size is <INPUT type='text' name='bits' value=5 size=3 onChange='this.form.nums.value=self.prev.range(eval(this.form.bits.value))'>-bits, you have: (change chop size and click elsewhere)<BR><INPUT type='text' name='nums' value='2^5=32 numbers, from 0 to 31.' size=55><BR></FORM>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// explainFermat -- pops up an explanation of Fermat cipher with title t
+function explainFermat(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P><b>Fermat</b>, an amateur mathematician, never invented any method of encoding. He did not invent cyclic multiplication -- that was known from the days of Euclid, many centuries ago. The first mathematician who recognized that there is a cyclic world of math, in which you can do addition and multiplication and other operations, was Gauss, about two centuries after Fermat. Gauss even invented the remainder operator <i>mod</i>.")
+   popup.document.writeln("<P>However, Fermat was among the first to investigate the remainders after cyclic multiplication, and discovered some interesting properties. He certainly knew that, in the cyclic world, you can undo multiplication by another multiplication.")
+   popup.document.writeln("<P>In fact, in the case of the cyclic length (or <b>modulo</b>) being a <i>prime</i> number, Fermat found that one can undo the multiplication by repeatedly multiplying by the same factor a sufficient number of times. This is his famous <b>Fermat's Little Theorem</b>, a topic in the next part.")
+   popup.document.writeln("<P>Therefore, it make sense to call encoding by cyclic multiplication <b>Fermat cipher</b>.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainExtEuclid -- pops up an explanation of extended Euclid with title t
+function explainExtEuclid(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>Given two numbers e and n, the <b>Euclidean algorithm</b> can be used to compute gcd(e,n), their greatest common divisor.")
+   popup.document.writeln("<P>The <b>extended Euclidean algorithm</b> starts with two identities:<pre>   e * 1 + n * 0 = e<BR>   e * 0 + n * 1 = n</pre>")
+   popup.document.writeln("As the computation proceeds to reduce the right-side to gcd(e,n) and zero respectively, the multipliers of e and n on the left-side change. At the end, we have an identity:<pre> e * d + n * k = gcd(e,n)</pre>")
+   popup.document.writeln("In cyclic multiply encryption, the encode key e must be chosen so that gcd(e,n) = 1. This reduces the identity to:<pre> e * d + n * k = 1</pre>")
+   popup.document.writeln("Taking modulo n on both sides, this is precisely:<pre> e * d = 1 mod n</pre>")
+   popup.document.writeln("meaning that e and d undo each other in multiplication modulo n.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainKeygen -- pops up an explanation of keys generation with title t
+function explainKeygen(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>In cyclic multiplication of modulo n, two factors e and e can undo each other in multiplication if<pre>  e * d = 1 mod n</pre>")
+   popup.document.writeln("To someone familiar with number theory, this relationship says that e (or d) is a number sharing no factor with n, or the greatest common divisor (gcd) of e and n is 1.")
+   popup.document.writeln("<P>Those who knows number theory also knows there is a simple way to compute the greatest comman divisor of two numbers gcd(x,y): the <b>Euclidean algorithm</b>.")
+   popup.document.writeln("<P>To generate such a pair of keys e and d so that they can undo each other in cyclic multiplicaton of modulo n, we first select a number e such that gcd(e,n) = 1, where gcd can be computed by the Euclidean algorithm. Then we can use the <b>extended Euclidean algorithm</b> to compute a number d such that<pre> e * d + k * n = gcd(e,n) = 1</pre> Taking modulo n for both sides, this leads to:<pre>  e * d = 1 mod n </pre>")
+   popup.document.writeln("<P>Given a modulo n, the count of how many numbers being relatively prime to n (that is, how many e less than n such that gcd(e,n) = 1) is called <b>phi(n)</b>, or Euler's phi-function. This will be useful in the next part.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainKeyPrime -- pops up an explanation of keys with prime modulo and title t
+function explainKeyPrime(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>In cyclic multiplication, if the modulo is a prime p, there is an interesting formula discovered by <b>Fermat</b>: for any number e less than the prime p, <pre> e<sup>(p-1)</sup> = 1  mod p </pre>")
+   popup.document.writeln("This statement first appeared in a letter of Fermat in 1640. As usual, the statement was made without proof. It became known as <b>Fermat's Little Theorem</b>. The first proof was given by Leibnitz in the 1700s, and later by Euler in 1736. The usual textbook proof nowadays was due to Ivory, in 1806.")
+   popup.document.writeln("<P>With this theorem, one can easily see that:<pre> e * e<sup>(p-2)</sup> = e<sup>(p-1)</sup> = 1  mod p</pre> This means that if e is taken as the encode key, then the decode key d is given by:<pre> d = e<sup>(p-2)</sup> mod p</pre>")
+   popup.document.writeln("<P>This is an explicit formula for the decode key d, given the encode key e and prime modulo p.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// asciiConverter -- pops up an ASCII converter
+function asciiConverter() {
+   var popup = window.open("","ASCII","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Converter</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a symbol: <INPUT type='text' name='ch' size='1' value='%'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=self.prev.ascii(this.form.ch.value);this.form.bin.value=self.prev.decToBin(self.prev.ascii(this.form.ch.value))'><BR>")
+   popup.document.writeln("ASCII value in decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("ASCII value in binary: <INPUT type='text' name='bin' size='9' value='00100101'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiDecoder -- pops up an ASCII decoder
+function asciiDecoder() {
+   var popup = window.open("","DECODE","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Decoder</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a binary: <INPUT type='text' name='bin' size='9' value='00100101'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=parseInt(this.form.bin.value,2);this.form.ch.value=self.prev.charOf(parseInt(this.form.bin.value,2))'><BR>")
+   popup.document.writeln("Binary as decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("Binary as symbol: <INPUT type='text' name='ch' size='1' value='%'><BR>")
+   popup.document.writeln("<P>Binary must be a valid 8-bit ASCII code to see a symbol.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// modMultiplyCalculator -- pops up an Modulo multiply calculator
+function modMultiplyCalculator() {
+   var popup = window.open("","MODMUL","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>Modulo Multiply Calculator</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Modulo n: <INPUT type='text' name='n' size='5' value='32'><BR>")
+   popup.document.writeln("Number a: <INPUT type='text' name='a' size='5' value='21'>")
+   popup.document.writeln("Number b: <INPUT type='text' name='b' size='5' value='17'><BR>")
+   popup.document.writeln("a*b mod n: <INPUT type='text' name='z' size='5' value='5'>")
+   popup.document.writeln("<INPUT type='button' value='COMPUTE' onClick='this.form.z.value=self.prev.timesModulo(eval(this.form.a.value),eval(this.form.b.value),eval(this.form.n.value))'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// gcdCalculator -- pops up a GCD calculator
+function gcdCalculator() {
+   var popup = window.open("","GCD","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>GCD Calculator</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Number a: <INPUT type='text' name='a' size='5' value='21'>")
+   popup.document.writeln("Number b: <INPUT type='text' name='b' size='5' value='17'><BR>")
+   popup.document.writeln("gcd(a,b): <INPUT type='text' name='z' size='5' value='1'>")
+   popup.document.writeln("<INPUT type='button' value='COMPUTE' onClick='this.form.z.value=self.prev.gcd(eval(this.form.a.value),eval(this.form.b.value))'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+//-- End hiding -->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption -- Part 4: Cyclic Multiply</H2>
+<HR>
+<H3><a name="TOC">Table of Content</a></H3>
+<UL type="square">
+<LI><a href="#Section1">Multiplying in a Cycle</a>
+<LI><a href="#Section2">Key Pair Generation</a>
+<LI><a href="#Section3">Prime Cycle</a>
+<LI><a href="#Section4">How to use a pair of keys</a>
+<LI><a href="#Section5">How good is cyclic multiply encryption?</a>
+</UL>
+<H3><a name="Section1">Multiplying in a Cycle</a></H3>
+<P>
+In the same way we can add in the cyclic world, we can also multiply in the cyclic world. Given two numbers a and b, and the cycle length, or modulo n, we can first multiply the numbers a and b, like ordinary multiplication, then divide the result by n, keeping only the remainder. The procedure, called <b>cyclic multiplication</b>, is denoted by:
+<pre>
+        a * b mod n
+</pre>
+If we use cyclic multiplication to encode, we must do something in order to decode. In ordinary math, we undo multiplication by division. In cyclic math, suprisingly, there is no division.
+<P>
+To undo multiplication in the cyclic world, we do another multiplication -- this is similar to undo addition by another addition in the cyclic world. How this can be done will be discussed in next section, when we look deeper into cyclic multiplication. Here, we just need to know that, given a modulo n, it is possible to generate two factors e and d, such that:
+<UL>
+<LI>The <b>encode key</b> is (e,n); that is, to encode, perform (multiply e, mod n) to each number of the message.
+<LI>The <b>decode key</b> is (d,n); that is, to decode, perform (mulitply d, mod n) to each number of the coded message.
+</UL>
+Since a pair of keys is used, this is <i>asymmetric</i> encoding. We shall discuss how the key pair d and e are generated by n later. Accepting that this is possible, we just need to determine the chop-size b once we have chosen the modulo n. As before, we can choose b to be the integer less than log<sub>2</sub>n, since chopping the data stream by chunks of b-bits means you get numbers <a href="javascript:explainChop('Chopping Up')">ranging</a> from 0 to 2<SUP>b</SUP>-1.
+<P>
+There is no special name for encoding by cyclic multiplication. Let's just invent a name: <a href="javascript:explainFermat('Fermat cipher')">Fermat cipher</a>. Here, you can pick a modulo, then press the "Generate" button. A pair of keys will be computed in the Encode and Decode boxes, along with the Chop size. Type in a message and press the "Fermat" button to see cyclic multiply encoding in action.<BR>
+<FORM name="main">
+Pick a Modulo: <INPUT type="text" name="modulo" size="15" value="6575">
+<INPUT type="button" value="Generate" onClick="keygenModulo(this.form)"><BR>
+Encode: <INPUT type="text" name="pubkey" size="12" value="3693">
+Decode: <INPUT type="text" name="prvkey" size="12" value="4232">
+Chop stream into <INPUT type="text" name="chop" size="5" value="12">-bits binary.<BR>
+<P>Type a message: <INPUT type="text" name="msg" value="My account is 3421." size="30">
+<INPUT type="button" value="Fermat" onClick="this.form.pad.value=showFermat(this.form.msg.value,eval(this.form.chop.value),eval(this.form.modulo.value),eval(this.form.pubkey.value),eval(this.form.prvkey.value))"><BR>
+<TEXTAREA name="pad" rows="18" cols="90"> </TEXTAREA><BR>
+</FORM>
+You can verify the first step (from symbols to binary) by this <a href="javascript:asciiConverter()">ASCII converter</a>.<BR>
+You can verify the last step (from binary to symbols) by this <a href="javascript:asciiDecoder()">ASCII decoder</a>.
+<P>
+You can verify the calculations by this <a href="javascript:modMultiplyCalculator()">Modulo Multiply Calculator</a>.<BR>
+You can verify the gcd calculations by this <a href="javascript:gcdCalculator()">GCD Calculator</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section2">Key Pair Generation</a></H3>
+<P>
+Using cyclic multiply encoding, when a number x is encoded, the coded number is: y = x * e mod n.<BR>
+To decode the number y, we compute: y * d mod n = (x * e) * d mod n = x * (e * d) mod n.<BR>
+This means that, for the two multiplications to undo each other, we require: e * d = 1 mod n.
+<P>
+You can use this <a href="javascript:modMultiplyCalculator()">Cyclic Multiply Calculator</a> to verify that the pair of keys generated above really undo each other in cyclic multiplication, that is:
+<pre>
+         e * d = 1  mod n
+</pre>
+Using number theory, given a modulo n, it is possible to <a href="javascript:explainKeygen('How to generate multiply inverses')">generate</a> the pair of keys e and n, based on the above relationship.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section3">Prime Cycle</a></H3>
+<P>
+If the cyclic length, modulo, is a prime number p, then every non-zero number less than p is relatively prime to p -- by the very fact that p is a prime. In this case, you can choose any number less than p as your encode key e. Applying the previous key-pair generation method, you can compute the decode key d.
+<P>
+In this case, Fermat found a <a href="javascript:explainKeyPrime('How to compute inverse directly?')">formula</a> to compute the decode key d directly from encode key e and the prime modulo p.
+<P>Here, you can choose a prime p, and pick any number less than p as your encode key. Press the "Generate" button will compute a decode key using the previous key-generation method, and a Fermat key using Fermat's formula. They should be the same. The chop size is determined by the modulo prime p. Press the "Fermat Again" button and scroll up to see how your message is encoded/decode based on these keys via cyclic multiplication.
+<FORM>
+Pick a prime Modulo p:&nbsp;
+<SELECT name="prime">
+<OPTION value="5">5
+<OPTION value="7">7
+<OPTION value="11">11
+<OPTION value="13">13
+<OPTION value="17">17
+<OPTION value="19">19
+<OPTION value="23">23
+<OPTION value="29">29
+<OPTION value="31">31
+<OPTION value="37">37
+<OPTION value="41">41
+<OPTION value="43">43
+<OPTION value="47">47
+<OPTION value="101">101
+<OPTION value="103">103
+<OPTION value="107" selected>107
+<OPTION value="109">109
+<OPTION value="211">211
+<OPTION value="223">223
+<OPTION value="503">503
+<OPTION value="509">509
+<OPTION value="1231">1231
+<OPTION value="1237">1237
+<OPTION value="5003">5003
+<OPTION value="9973">9973
+<OPTION value="10007">10007
+<OPTION value="34351">34351
+<OPTION value="77339">77339
+<OPTION value="90353">90353
+<OPTION value="99991">99991
+<OPTION value="235439">235439
+<OPTION value="235441">235441
+<OPTION value="235447">235447
+<OPTION value="544373">544373
+<OPTION value="676573">676573
+</SELECT>
+Choose an Encode key: <INPUT type="text" name="pubkey" size="12" value="11">
+<INPUT type="button" value="Generate" onClick="keygenPrime(this.form)"><BR>
+Decode key: <INPUT type="text" name="prvkey" size="12" value="39">
+Fermat key: <INPUT type="text" name="fermat" size="12" value="39">
+Chop stream into <INPUT type="text" name="chop" size="5" value="6">-bits binary.
+<INPUT type="button" value="Fermat Again" onClick="main.pad.value=showFermat(main.msg.value,eval(this.form.chop.value),eval(this.form.prime.options[form.prime.selectedIndex].value),eval(this.form.pubkey.value),eval(this.form.prvkey.value))"> (scroll up to view result.)<BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section4">How to use a pair of keys</a></H3>
+<P>
+If you use a pair of keys to encode/decode messages sending between you and your partner, who should keep the encode key (e,n), and who should keep the decode key (d,n) ?
+<P>
+The arrangement is generally as follows:
+<UL>
+<LI>Pick a modulo n, and generate the key pair (e,n) and (d,n).
+<LI>Send the encode key (e,n) to your partner.
+<LI>Keep the decode key (d,n) known only to you.
+</UL>
+When your partner wants to send you a message, your partner can do the following:
+<UL>
+<LI>Chop up the message into numbers, and encode each number by (e,n).
+<LI>You receive the encoded message, and decode each number by (d,n).
+<LI>You recombine the decoded numbers into a message.
+</UL>
+When you want to send your partner a message, you can do the following:
+<UL>
+<LI>Chop up the message into numbers, and encode each number by (d,n).
+<LI>Your partner receives the encoded message, and decode each number by (e,n).
+<LI>Your partner recombines the decoded numbers into a message.
+</UL>
+This works because the keys (e,n) and (d,n) just undo each other. Either one can be used for encoding, then the other can be used for decoding.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section5">How good is cyclic multiply encryption?</a></H3>
+<P>
+Cyclic multiply encryption uses a pair of keys e and d derived from the modulo n. If someone can get hold of the encode key (e,n), he/she still needs the decode key (d,n) to read any message. If the decode key is difficult to find, this scheme will be very secure indeed.
+<P>
+To most ordinary people, given the encode key (e,n), it is indeed difficult to compute the decode key (d,n). The simplest way is to try every number d less than n and check the one that satisfies:<pre> e * d = 1 mod n</pre> This can be a time-consuming process if the modulo n is large enough.
+<P>
+However, to a math person, especially one with a good knowledge of number theory, the decode key can be computed by the <b><a href="javascript:explainExtEuclid('How to compute multiply inverse?')">extended Euclidean algorithm</a></b>. In the case of a <i>prime</i> modulo p, there is even a <a href="javascript:explainKeyPrime('How to compute inverse directly?')">direct formula</a> for the decode key due to <b>Fermat</b>. There is no way to hide secrets using this scheme if the person who wants to know the secret is a number-theorist!
+<P>
+Can we find a pair of keys such that, given the encode key, the decode key is so hard to find that even mathematicians will surrender? This is <a href="pkey005.html">part 5</a>: cyclic power encoding.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<HR>
+Back to <a href="pkey.html">home</a>.
+</BODY>
+</HTML>

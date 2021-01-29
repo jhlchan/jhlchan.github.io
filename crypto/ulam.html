@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>Ulam spiral</TITLE>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="keywords" CONTENT="ulam, spiral, prime, number">
+<META NAME="description" CONTENT="Java applet featuring a graphical view of prime numbers by Dario Alpern.">
+<META http-equiv="PICS-Label" content='(PICS-1.1 "http://www.classify.org/safesurf/" l gen true for "http://www.alpertron.com.ar/" r (SS~~000 1))'>
+<meta http-equiv="pics-label" content='(pics-1.1 "http://www.icra.org/ratingsv02.html" comment "ICRAonline v2.0" l gen true for "http://www.alpertron.com.ar/"  r (nz 1 vz 1 lz 1 oz 1 cz 1) "http://www.rsac.org/ratingsv01.html" l gen true for "http://www.alpertron.com.ar/"  r (n 0 s 0 v 0 l 0))'>
+<meta name="Author" content="Dario Alejandro Alpern">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+</head>
+<body bgcolor="#FBEAC6" style="font-family: serif">
+<CENTER><H2>Ulam's Spiral</H2><P>
+<TABLE BORDER=6 BGCOLOR="#C0C0C0"><TR><TD>
+<TABLE BORDER=2 BGCOLOR="#C0C0C0"><TR><TD>
+<applet code="ulam.class" archive="ulam.jar" width=600 height=350>
+</applet>
+</TABLE>
+</TABLE>
+</CENTER>
+<P>Do you see any pattern in this graph? You will not believe at first glance that it is generated using prime numbers.
+<P>In order to generate it, the numbers are arranged in a spiral, as follows:
+<P><CENTER><PRE>
+13 -- 12 -- 11 -- 10    25
+|                 |     |
+14    03 -- 02    09    24
+|     |     |     |     |
+15    04    01    08    23
+|     |           |     |
+16    05 -- 06 -- 07    22
+|                       |
+17 -- 18 -- 19 -- 20 -- 21
+</PRE></CENTER>
+<P>Then the prime numbers are marked. Note the abundance of diagonals.
+<P>In the applet above you can see the spiral made up to 10<SUP>14</SUP>. The prime numbers are marked in green.
+<P>Move the graph by clicking in the arrows or using the arrow keys. You can obtain more detail or see a larger area using the magnifying glass buttons.
+<P>You can also see the position <B>(x, y)</B> in the spiral and the number <B>n</B> of any point of the graph by moving the cursor to that point.
+The applet shows the equations of the diagonal lines that intersect in the point marked by the cursor (see explanation below).
+<P>Move the center by typing a new number (up to 14 digits) in the left input box and press the return key.
+<P>Change the starting number in the center of the spiral by typing a new number (up to 14 digits) in the right input box and press the return key.
+By clicking in the triangle buttons you can increment or decrement this value.
+<P>The formula that gives the numbers in the diagonal lines can be expressed using quadratic polynomials. The discriminant (delta) can be seen by clicking in the delta button.
+The quadratic polynomials are shown in the screen along with their factorization (if posible).
+In this case it is obvious the the diagonal cannot contain primes, except in exceptional cases (when one factor is 1 and the other is prime).
+These diagonal lines can be seen in blue by clicking in the parentheses button (that represent the factors).
+<P>When the quadratic polynomial cannot be factorized, then its diagonal will contain primes. It is interesting to notice that about half the primes cannot divide any of the values of the polynomial.
+For instance, when we select the center of the spiral equal to 41 by entering this number in the right input box, we will find a diagonal with a lot of primes in the direction NW-SE.
+This is because the values that take the polynomial 4t<SUP>2</SUP>&nbsp;+&nbsp;2t&nbsp;+&nbsp;41 cannot divide 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 or 37 among other prime numbers.
+Any number in the diagonal line less than 41<SUP>2</SUP> = 1681 must be prime, because it is not multiple of any prime less than its square root.
+<P>The numbers shown at the right of the polynomial are the primes less than 100 that cannot divide any value of the polynomial.
+<P>Last updated February 15th, 2003.
+<hr>
+<small><i>Original URL:</i> <a href="http://www.alpertron.com.ar/ULAM.HTM">http://www.alpertron.com.ar/ULAM.HTM</a></small>
+</BODY>
+</HTML>
