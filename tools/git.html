@@ -6,6 +6,7 @@
 <base target="_blank"/>
 <title>GitHub and SourceTree</title>
 <link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
 <script type="text/javascript">
 // set defaults
 function check() {
@@ -43,8 +44,6 @@ function set_locate(place) {
        for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
     }
 }
-// Show pop-up of image element
-function showPopup(element) {
 // Show pop-up of image element
 function showPopup(element) {
    // Get the modal
@@ -217,6 +216,55 @@ Thus there are two steps: commit puts the changes to the local git, and push upd
 <li>Stage and commit again with message: delete one line, but this time click the checkbox: Push changes immediately.</li>
 </ul>
 Click "Commit", and push follows automatically. This will be the default behaviour until the box is unchecked.
+
+<h2>Your Website</h2>
+GitHub provides GitHub Pages, a static site hosting service【7】.
+You just need to create a special "io" project (for input/output), then you'll have your web site.
+
+<h3>GitHub Website (create)</h3>
+Visit my GitHub <href="https://github.com/jhlchan/">https://github.com/jhlchan/</a>, there are 3 projects. One of them is called "jhlchan.github.io".
+This project has a file index.html, which is my GitHub homepage.
+View its content. Select all the lines (from &lt;html&gt; to &lt;/html&gt;) and put it to clipboard (right click &gt; copy).
+<p>
+Once log into your GitHub account, you can create your own website with these steps:
+<ol>
+<li>Create a new repository (click '+' on the right to the bell at top-right corner)</li>
+<li>Put in a special name for repository: "github.io" without quotes.</br>
+The prefix will be your username. Description is optional. Default is public.
+Check "Add a README file", then click "Create New Repository" (green).
+Note that io = in/out: anything you check in to this project is directly published out!</li>
+<li>Create a new file: (use "Add File")</br>
+Name your file: index.html.
+This is a special name for the web homepage.
+For the file content, paste from clipboard (right click &gt; paste).
+Then "Preview changes", add comment, and "Commit New File".</li>
+</ol>
+That's about it.
+
+<h3>GitHub Website (check)</h3>
+Now, in another device or browser (or browser tab): type <a href="https://jhlchan.github.io">https://jhlchan.github.io</a>.
+This is my website. There are some topics, click each one to see that the hyperlinks work.
+<p>
+For your website, in the URL replace 'jhlchan' with your GitHub username. It should look the same (because you just copied my homepage). If your site is not ready, wait 1 minute, or check with the video【8】.
+<p>
+Once you get your GitHub site working, click the topics. They won't work. This is because your site has only the homepage index.html, without any other content.
+<p>
+To make the hyperlinks work, either you can copy my content (which is very tedious), or simply edit your index.html to replace local hyperlinks with external hyperlinks to contents of my site. You'll need to learn a bit about HTML (= hypertext markup language). Use Google or others resources.
+I'll leave this as:
+<p>
+<mark>A Challenge: make the topic hyperlinks in your GitHub website work.
+
+<h3>GitHub Website (improve)</h3>
+You have full control of your website: its content, its features, its style.
+But you need to learn several technologies:
+<ul>
+<li>HTML, or some simplified form, like markdown,</li>
+<li>Stylesheets, to change the look and feel of your site,</li>
+<li>Javascript, to make your site interactive.</li>
+</ul>
+Use resources from Google or YouTube to help you with learning.
+<p>
+So you can have your own website! Think about the content, and spread your ideas.
 
 <h2>Epilog</h2>
 In GitHub, refresh your sandbox repository to see the changes coming from your computer. Recall that "Blame" shows the file change history.
@@ -414,6 +462,13 @@ https://www.youtube.com/watch?v=OTyGEzxvK7k
 Github Tutorial For Beginners - Github Basics for Mac or Windows & Source Control Basics【18:54】
 https://www.youtube.com/watch?v=0fKg7e37bQE
 
+Working with GitHub Pages
+https://help.github.com/pages/
+You can create a website directly from a GitHub repository.
+
+Create Your First GitHub Pages Website 【8:40】
+https://www.youtube.com/watch?v=BA_c3bGQXlQ
+This video will walk you step by step through creating a live website using GitHub Pages. 
 
 -->
 
@@ -454,6 +509,15 @@ Install in Windows. Ignore KDiff3, a tool to show file differences.<p>
 <a href="https://www.youtube.com/watch?v=sUAs0M_dSgE">
 <img src="http://img.youtube.com/vi/sUAs0M_dSgE/0.jpg" width="15%"/></a><br>
 This explains how to generate SSH keys for both Windows and MacOs.<p>
+</li>
+<li>【7】Working with GitHub Pages<br>
+<a href="https://help.github.com/pages/">https://help.github.com/pages/</a><br>
+Documentation for creating a website directly from a GitHub repository.<p>
+</li>
+<li>【8】Create Your First GitHub Pages Website【8:40】<br>
+<a href="https://www.youtube.com/watch?v=BA_c3bGQXlQ">
+<img src="http://img.youtube.com/vi/BA_c3bGQXlQ/0.jpg" width="15%"/></a><br>
+This explains how to create your own static website in GitHub.<p>
 </li>
 <!-- end of links -->
 </ul>
