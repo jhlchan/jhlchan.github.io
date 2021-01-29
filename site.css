@@ -28,6 +28,10 @@ a:hover,a:focus{
    color:#0062cc; /* navy blue */
    text-decoration:underline;
 }
+/* Mark tags */
+mark {
+   background-color:#91f57a; /* light green */
+}
 /* table */
 table {
   border-collapse: collapse;
