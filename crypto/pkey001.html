@@ -1,0 +1,237 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption -- Part 1</TITLE>
+<SCRIPT LANGANGE="Javascript">
+<!-- Hide from other browers
+
+ASCII = " !" + '"' + "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ"
+
+// ascii -- return ASCII code of a character
+function ascii(c) {
+
+   return 32 + ASCII.indexOf(c)
+}
+
+// charOf -- return character given an ASCII code
+function charOf(n) {
+
+   return ASCII.charAt(n-32)
+}
+
+// decimal -- convert a list of symbols to ASCIIs, in decimal
+function decimal(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += ascii(m.charAt(j)) + ' '
+
+   return s
+}
+
+// decToBinary -- convert decimal x to n-bit binary
+function decToBinary(x,n) {
+   var s = ''
+
+   for (var j = 0; j < n; j++) {
+      s = x%2 + s
+      x = Math.floor(x/2)
+   }
+   return s
+}
+
+// binary -- convert a list of symbols to ASCIIs, in binary
+function binary(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += decToBinary(ascii(m.charAt(j)),8) + ' '
+
+   return s
+}
+
+// noBlank -- remove blanks from a message
+function noBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) if (m.charAt(j) != ' ') s += m.charAt(j)
+
+   return s
+}
+
+// addBlank -- add blanks between characters
+function addBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ' '
+
+   return s
+}
+
+// chop -- chop stream by n bytes
+function chop(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ((j+1)%n == 0 ? ' ' : '')
+
+   return s
+}
+
+// number -- express a stream of binary n-bytes by numbers
+function number(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += parseInt(m.substr(j,n),2) + ' '
+
+   return s
+}
+
+// read -- read a stream of bits as n-bit binaries, and convert to ASCII
+function read(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += charOf(parseInt(m.substr(j,n),2))
+
+   return s
+}
+
+// showStream -- show stream of message
+function showStream(m) {
+   
+   return 'MESSAGE: ' + m + '\n' +
+          ' STREAM: ' + noBlank(binary(m)) + '\n'
+}
+
+// showEncode -- show ASCII encoding of message
+function showEncode(m) {
+
+   return 'MESSAGE: ' + m + '\n' +
+          '  CHARS: ' + addBlank(m) + '\n' +
+          '  ASCII: ' + decimal(m) + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' +
+          ' STREAM: ' + noBlank(binary(m)) + '\n'
+}
+
+// showDecode -- show ASCII decoding of message
+function showDecode(m) {
+   var stream = noBlank(binary(m))
+
+   return ' STREAM: ' + stream + '\n' +
+          ' CHOP 8: ' + chop(stream,8) + '\n' +
+          '  ASCII: ' + number(stream,8) + '\n' + 
+          '  CHARS: ' + addBlank(read(stream,8)) + '\n' +
+          'MESSAGE: ' + read(stream,8) + '\n'
+}
+
+// explain -- pops up an explanation with title t and body b
+function explain(t,b) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>" + b + "</BODY></HTML>")
+   popup.document.close()
+}
+
+// asciiConverter -- pops up an ASCII converter
+function asciiConverter() {
+   var popup = window.open("","ASCII","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Converter</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a symbol: <INPUT type='text' name='ch' size='1' value='%'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=self.prev.ascii(this.form.ch.value);this.form.bin.value=self.prev.decToBin(self.prev.ascii(this.form.ch.value))'><BR>")
+   popup.document.writeln("ASCII value in decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("ASCII value in binary: <INPUT type='text' name='bin' size='9' value='00100101'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiDecoder -- pops up an ASCII decoder
+function asciiDecoder() {
+   var popup = window.open("","DECODE","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Decoder</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a binary: <INPUT type='text' name='bin' size='9' value='00100101'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=parseInt(this.form.bin.value,2);this.form.ch.value=self.prev.charOf(parseInt(this.form.bin.value,2))'><BR>")
+   popup.document.writeln("Binary as decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("Binary as symbol: <INPUT type='text' name='ch' size='1' value='%'><BR>")
+   popup.document.writeln("<P>Binary must be a valid 8-bit ASCII code to see a symbol.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+//-- End hiding -->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption -- Part 1: Sending Messages</H2>
+<HR>
+<H3><a name="TOC">Table of Content</a></H3>
+<UL type="square">
+<LI><a href="#Section1">Introduction</a>
+<LI><a href="#Section2">ASCII Encoding</a>
+<LI><a href="#Section3">ASCII Decoding</a>
+<LI><a href="#Section4">Any secret?</a>
+</UL>
+<H3><a name="Section1">Introduction</a></H3>
+<P>
+To understand public key encryption, and how it can be used, we must have some idea of how messages are transmitted from one computer to another.
+<P>
+Ultimately, the work of sending or receiving data is being done by the central processing unit (CPU) of the computer (or the network part of the computer). The CPU can handle only numbers -- in fact, binary numbers consisting of digits 0 and 1. Therefore, all text information has to be reduced to a long string of 0's and 1's for data transmission.
+<P>
+Let's see this process in action.
+<FORM name="frm">
+Type a message: <INPUT type="text" name="msg" value="My account is 3421." size="30">
+<INPUT type="button" value="Convert to Binary Stream" onClick="this.form.pad.value=showStream(this.form.msg.value)"><BR>
+<TEXTAREA name="pad" rows="12" cols="90"> </TEXTAREA><BR>
+<INPUT type="button" value="ASCII Encoding of Message" onClick="this.form.pad.value=showEncode(this.form.msg.value)">
+<INPUT type="button" value="ASCII Decoding of Message" onClick="this.form.pad.value+='\n' +showDecode(this.form.msg.value)"><BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section2">ASCII Encoding</a></H3>
+<P>
+For the English language, the standard way to convert symbols to numbers is called the American Standard Code for Information Interchange, or ASCII. The symbols consist of the alphabets, uppercase and lowercase, all digits and punctuation marks, about 26+26+10+30=92 symbols. Each symbol is assigned an <a href="javascript:explain('Why 7-bits for ASCII','This is because, with 7-bits, you have 2<SUP>7</SUP>=128 numbers to play with. With 6-bits, you only have half, or 2<SUP>6</SUP>=64 numbers, not enough for the set of English symbols:<UL><LI>26 alphabets uppercase<LI>26 alphabets lowercase<LI>10 decimal digits<LI>about 30 punctuation marks (look at your keyboard)</UL>In total, about 92 symbols.')">7-bit binary number</a>.
+<P>
+Nowadays, CPUs are designed with size 8-bits, 16-bits, 32-bits, 64-bits, etc. Computers everywhere use 8-bits for every symbol. Now we have 2<SUP>8</SUP>=256 numbers to play with. The rule is to use the first 128 numbers for ASCII, effectively putting a leading 0 to the original 7-bit binary to make up an 8-bit binary number. The remaining half, 128 symbols, are for graphic symbols.
+<P>
+Use the <a href="javascript:asciiConverter()">ASCII converter</a> to see how this works. This is called the standard ASCII encoding. Applying this method, any English text can be sent as a series of 8-bit binaries.
+<FORM>
+To see how the above message is converted to a stream of binary, click ths: 
+<INPUT type="button" value="ASCII Encoding of Message" onClick="document.frm.pad.value=showEncode(document.frm.msg.value)"> and scroll up to read the box.<BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section3">ASCII Decoding</a></H3>
+<P>
+Given a data stream of 0's and 1's, how can you recover the message?
+<P>
+If you know that the stream is produced by ASCII encoding, the reverse (or decoding) is straight forward:
+<UL>
+<LI>Chop the data streams into 8-bit chunks
+<LI>Convert each 8-bit binary number to a decimal number
+<LI>Look up the ASCII table and convert each number to its character
+</UL>
+This is reading the above example from bottom to top. Note that each decimal number is between 0 and 127, the 2<SUP>7</SUP>=128 values of original 7-bit binary (or leading bit is 0 in 8-bit binary).
+<FORM>
+To see if the computer can do decoding, click ths: 
+<INPUT type="button" value="ASCII Decoding of Message" onClick="document.frm.pad.value+='\n' +showDecode(document.frm.msg.value)"> and scroll up to read the box.<BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section4">Any secret?</a></H3>
+<P>
+If you haven't met ASCII codes before, you may think that computers are already very good in keeping messages secret. Suppose someone tries to intercept the bits during transmission. Surely that someone has to be very clever to make any sense out of a long stream of 0's and 1's.
+<P>
+The truth is: these ASCII codes are standard among computers. The encoding and decoding methods are well-known -- they are even built into some hardware. Here is a simple <a href="javascript:asciiDecoder()">ASCII decoder</a>.
+<P>
+There is no way to hide secrets using standard ASCII. This is just a symbol-to-number coding scheme necessary for a numeric processor -- and all CPUs are really number crunchers.
+<P>
+How about inventing your own symbol-to-number coding scheme to hide your messages?
+<P>
+Well, you can do that, but then only your partner who knows how to convert the numbers back into symbols can talk to you. You and your partner need to develop your special softward/hardware to do your special encoding and decoding. And only you and your partner can talk. You can't use any of the standard software/hardware, and you can't talk to other computers in the world.
+<P>
+This may be useful for, say, the hot-line between Washington and Moscow, but certainly not for your connection to the Internet.
+<P>
+However, it is possible to do some tricks to the binary stream and keep your message secret, still using ASCII codes. This is the topic of <a href="pkey002.html">Part 2</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<HR>
+Back to <a href="pkey.html">home</a>.
+</BODY>
+</HTML>

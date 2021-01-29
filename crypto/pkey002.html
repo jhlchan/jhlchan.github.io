@@ -1,0 +1,512 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption -- Part 2</TITLE>
+<SCRIPT LANGANGE="Javascript">
+<!-- Hide from other browers
+
+ASCII = " !" + '"' + "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ"
+
+// ascii -- return ASCII code of a character
+function ascii(c) {
+
+   return 32 + ASCII.indexOf(c)
+}
+
+// charOf -- return character given an ASCII code
+function charOf(n) {
+
+   return ASCII.charAt(n-32)
+}
+
+// decimal -- convert a list of symbols to ASCIIs, in decimal
+function decimal(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += ascii(m.charAt(j)) + ' '
+
+   return s
+}
+
+// decToBinary -- convert decimal x to n-bit binary
+function decToBinary(x,n) {
+   var s = ''
+
+   for (var j = 0; j < n; j++) {
+      s = x%2 + s
+      x = Math.floor(x/2)
+   }
+
+   return s
+}
+
+// binary -- convert a list of symbols to ASCIIs, in binary
+function binary(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += decToBinary(ascii(m.charAt(j)),8) + ' '
+
+   return s
+}
+
+// noBlank -- remove blanks from a message
+function noBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) if (m.charAt(j) != ' ') s += m.charAt(j)
+
+   return s
+}
+
+// addBlank -- add blanks between characters
+function addBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ' '
+
+   return s
+}
+
+// chop -- chop stream by n bytes
+function chop(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ((j+1)%n == 0 ? ' ' : '')
+
+   return s
+}
+
+// number -- express a stream of binary n-bytes by numbers
+function number(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += parseInt(m.substr(j,n),2) + ' '
+
+   return s
+}
+
+// add -- add key k to a list of numbers
+function add(m,k) {
+   k = eval(k) 
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += (parseInt(m.substr(0,j))+k) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// multiply -- multiply key k to a list of numbers
+function multiply(m,k) {
+   k = eval(k) 
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += (parseInt(m.substr(0,j))*k) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// divide -- divide key k from a list of numbers
+function divide(m,k) {
+   k = eval(k) 
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += (parseInt(m.substr(0,j))/k) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// power -- raise to power key k for a list of numbers
+function power(m,k) {
+   k = eval(k) 
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += Math.pow(parseInt(m.substr(0,j)),k) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// proot -- take power-root of key k for a list of numbers
+function proot(m,k) {
+   k = eval(k) 
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += Math.round(Math.exp(Math.log(parseInt(m.substr(0,j)))/k)) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// pack -- pack a list of numbers into n-bit binary
+function pack(m,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += decToBinary(parseInt(m.substr(0,j)),n)
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// read -- read a stream of bits as n-bit binaries, and convert to ASCII
+function read(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += charOf(parseInt(m.substr(j,n),2))
+
+   return s
+}
+
+// format -- format a string to the required width
+function format(s,w) {
+
+   while (s.length < w) s = ' ' + s
+
+   return s
+}
+
+// ordinal -- put number to its ordinal form
+function ordinal(n) {
+   if (n == 2) return '2nd'
+   if (n == 3) return '3rd'
+   return n + 'th'
+}
+
+// range -- range of numbers when chopped by b-bits
+function range(b) {
+   var c = Math.pow(2,b)
+
+   return '2^' + b + '=' + c + ' numbers, from 0 to ' + (c-1) + '.'
+}
+
+// showChop -- show message chopping by b-bits
+function showChop(m,b) {
+   while (8*m.length % b != 0) m += '~' // extends message
+
+   var stream = noBlank(binary(m))
+   var c = Math.pow(2,b)
+
+   return 'Chopping by ' + b + '-bits: there are ' + range(b) + '\n' +
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + number(stream,b) + '\n'
+}
+
+// showRecover -- show message recovery after chopping by b-bits
+function showRecover(m,b) {
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = pack(s1,b)
+
+   return 'RECEIVE: ' + s1 + '\n' +
+   format(b + '-BITS',7) + ': ' + chop(s2,b) + '\n' +
+          ' STREAM: ' + s2 + '\n' +
+          ' CHOP 8: ' + chop(s2,8) + '\n' +
+          'MESSAGE: ' + read(s2,8) + '\n'
+}
+
+// showAddEncodeDecode -- show add encoding/decoding by key k
+function showAddEncodeDecode(m,b,k) {
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = add(s1,k)
+   var s3 = add(s2,-k)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits, encode: +' + k + ', decode: -' + k + '.\n' +
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// showMultiplyEncodeDecode -- show add encoding/decoding by key k
+function showMultiplyEncodeDecode(m,b,k) {
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = multiply(s1,k)
+   var s3 = divide(s2,k)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits, encode: *' + k + ', decode: /' + k + '.\n' +
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// showPowerEncodeDecode -- show add encoding/decoding by key k
+function showPowerEncodeDecode(m,b,k) {
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = power(s1,k)
+   var s3 = proot(s2,k)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits, encode: raise to ' + ordinal(k) + ' power, decode: take ' + ordinal(k) + ' root.\n' +
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// explain -- pops up an explanation with title t and body b
+function explain(t,b) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>" + b + "</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiConverter -- pops up an ASCII converter
+function asciiConverter() {
+   var popup = window.open("","ASCII","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Converter</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a symbol: <INPUT type='text' name='ch' size='1' value='%'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=self.prev.ascii(this.form.ch.value);this.form.bin.value=self.prev.decToBin(self.prev.ascii(this.form.ch.value))'><BR>")
+   popup.document.writeln("ASCII value in decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("ASCII value in binary: <INPUT type='text' name='bin' size='9' value='00100101'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiDecoder -- pops up an ASCII decoder
+function asciiDecoder() {
+   var popup = window.open("","DECODE","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Decoder</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a binary: <INPUT type='text' name='bin' size='9' value='00100101'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=parseInt(this.form.bin.value,2);this.form.ch.value=self.prev.charOf(parseInt(this.form.bin.value,2))'><BR>")
+   popup.document.writeln("Binary as decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("Binary as symbol: <INPUT type='text' name='ch' size='1' value='%'><BR>")
+   popup.document.writeln("<P>Binary must be a valid 8-bit ASCII code to see a symbol.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// compute -- computation for calculator
+function compute(form) {
+   var op = form.op.options[form.op.selectedIndex].value
+   var expr = ""
+
+   switch (op) {
+      case '+': 
+      case '-':
+      case '*':
+      case '/': expr = form.a.value + op + form.b.value; break;
+      case '^': expr = "Math.pow(" + form.a.value + "," + form.b.value + ")"; break;
+      case '@': expr = "Math.round(Math.pow(" + form.a.value + ",1/" + form.b.value + "))"; break;
+      default: alert("Unknown operator: " + op)
+   }
+
+   return eval(expr)
+}
+
+// calculator -- pops up a Calculator
+function calculator() {
+   var popup = window.open("","CALCULATOR","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>Calculator</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("<INPUT type='text' name='a' size='12' value='9'>")
+   popup.document.writeln("<SELECT name='op'><OPTION value='+' selected>+<OPTION value='-'>-<OPTION value='*'>*<OPTION value='/'>/<OPTION value='^'>^<OPTION value='@'>@</SELECT>")
+   popup.document.writeln("<INPUT type='text' name='b' size='12' value='17'>")
+   popup.document.writeln("<INPUT type='button' value='COMPUTE' onClick='this.form.ans.value=self.prev.compute(this.form)'><BR>")
+   popup.document.writeln("&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ")
+   popup.document.writeln("Result: <INPUT type='text' name='ans' size='12' value='26'><BR>")
+   popup.document.writeln("Note:<BR>+: add, -: subtract, *: multiply, /: divide<BR>a ^ b: a to b-th power<BR>a @ b: a to b-th root<BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+//-- End hiding -->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption -- Part 2: Sending Numbers</H2>
+<HR>
+<H3><a name="TOC">Table of Content</a></H3>
+<UL type="square">
+<LI><a href="#Section1">Chop to other sizes</a>
+<LI><a href="#Section2">Add a constant</a>
+<LI><a href="#Section3">Multiply by a factor</a>
+<LI><a href="#Section4">Raise to a power</a>
+<LI><a href="#Section5">How good is the secret?</a>
+</UL>
+<H3><a name="Section1">Chop to other sizes</a></H3>
+<P>
+We have seen standard ASCII encoding: Each symbol converts to an 8-bit binary.<BR>
+We have seen standard ASCII decoding: Split into 8-bit binaries and lookup each symbol.
+<P>
+This is 8-bit chopping. However, the data stream is just a long string of 0's and 1's. You can chop the data stream in various sizes, so that you can think of the data stream as a stream of numbers in various sizes.
+<P>
+If you chop the data stream by chunks of b-bits, you get numbers <a href="javascript:explain('Chopping Up', '<TABLE width=100%><TR><TH align=LEFT>Chop size<TH align=LEFT>Chop numbers</TR><TR><TD>5-bits<TD>from 0 to 31</TR><TR><TD>6-bits<TD>from 0 to 63</TR><TR><TD>7-bits<TD>from 0 to 127</TR><TR><TD>8-bits<TD>from 0 to 255</TR><TR><TD>9-bits<TD>from 0 to 511</TR><TR><TD>10-bits<TD>from 0 to 1023</TR></TABLE><FORM>If chop size is <INPUT type=\'text\' name=\'bits\' value=5 size=3 onChange=\'this.form.nums.value=self.prev.range(eval(this.form.bits.value))\'>-bits, you have: (change chop size and click elsewhere)<BR><INPUT type=\'text\' name=\'nums\' value=\'2^5=32 numbers, from 0 to 31.\' size=55><BR></FORM>')">ranging</a> from 0 to 2<SUP>b</SUP>-1, or 2^b - 1. 
+<P>
+Let's see how this chopping of message works.<BR>
+<FORM name="main">
+<P>Type a message: <INPUT type="text" name="msg" value="My account is 3421." size="30">
+Chop into <INPUT type="text" name="bits" value="5" size="3">-bit chunks.<BR>
+<INPUT type="button" value="Chop/Send Message" onClick="main.pad.value=showChop(main.msg.value,eval(main.bits.value))">
+<INPUT type="button" value="Recover Message" onClick="main.pad.value+='\n'+showRecover(main.msg.value,eval(main.bits.value))"><BR>
+<TEXTAREA name="pad" rows="14" cols="90"> </TEXTAREA><BR>
+</FORM>
+You can verify the first step (from symbols to binary) by this <a href="javascript:asciiConverter()">ASCII converter</a>.
+<P>
+Note the padding character '~'. This is used to extend the message so that it can be evenly chopped by b-bits, where b is the value chosen above.
+<P>
+Of course, your partner needs to know how many bits you are chopping, and do the following to recover the message:
+<UL>
+<LI>Convert the numbers to b-bits binary
+<LI>Pack the binaries into a long stream
+<LI>Chop the stream by 8-bits binary and use ASCII to decode
+</UL>
+<FORM>
+To see how this works, click: 
+<INPUT type="button" value="Recover Message" onClick="main.pad.value+='\n'+showRecover(main.msg.value,eval(main.bits.value))"><BR>
+</FORM>
+You can verify the last step (from binary to symbols) by this <a href="javascript:asciiDecoder()">ASCII decoder</a>.
+<P>
+Reading the example above, you can see that we are sending decimal numbers from one computer and the other computer is receiving decimal numbers.
+<P>From now on, we assume that computers can talk using numbers, decimal or binary. If you are wondering technically how the numbers can be sent again as a binary stream, here is an <a href="javascript:explain('How to send a sequence of numbers in binary','Given a sequence of numbers, if each number is no bigger than some <b>maximum M</b>, you can always convert the numbers as <b>n-bit binary</b>, where<P> 2<sup>n</sup> &gt; M, i.e. a power of 2 that exceeds the maximum.<P>For example, if all the numbers are less than M=100, you can pick n=7, since 2<sup>7</sup>=128 &gt; 100. By converting each decimal number into 7-bit binary, you end up with a stream of 0\'s and 1\'s, suitable for the CPU which handles binaries.<P>To help message recovery, the value n chosen is usually sent along in the message <b>header</b>. The actual binary stream of the text is the message <b>body</b>.')">explanation</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section2">Add a constant</a></H3>
+<P>
+To keep a secret, you need to do some tricks with these chop-up numbers, and send the results instead. As long as your partner can undo the trick you apply, your partner can recover the message through the results.
+<P>
+For example, you can add 17 to each number. To recover the message, your partner will do the reverse, subtract 17 from each number. As long as outsiders <a href="javascript:explain('Can outsiders figure out this trick?','The encoding (add 17) and decoding (subtract 17) methods are too simple. However, here we want to show you an example, not worrying about its strength of keeping real secrets. The science of <b>cryptology</b> is devoted to cracking codes.')">cannot figure out</a> your tricks, you and your partner can exchange messages secretly.
+<P>
+The number 17 is called the <b>key</b>. We shall denote the key by k. We have the methods:
+<UL>
+<LI>to encode, add key to each number, or (add k)
+<LI>to decode, subtract key from each number, or (subtract k)
+</UL>
+Since both methods of encryption and decryption use the same key, this kind of scheme is called <b>symmetric</b> encryption. Obviously, the key must be kept secret to enable the secrecy of the message.
+<P>
+Click here for a demonstration.
+<FORM>
+Key: <INPUT type="text" name="key" value="17" size="5">
+<INPUT type="button" value="Encode/Decode by Add/Subtract" onClick="main.pad.value=showAddEncodeDecode(main.msg.value,eval(main.bits.value),eval(this.form.key.value))"><BR>
+</FORM>
+Try to set your own key and click the "Encode/Decode" again.<BR>
+If you need a calculator to check the computations, here is <a href="javascript:calculator()">one</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section3">Multiply by a factor</a></H3>
+<P>
+We can multiply each number by the key k, and send out the resulting products as encoding. To decode, we undo the multiplication by division: we divide each received number by the key k. This would give us a scheme for encryption by multiplication with key k:
+<UL>
+<LI>to encode, perform to each number (multiply k) 
+<LI>to decode, perform to each number (divide by k)
+</UL>
+Click here for a demonstration.
+<FORM>
+Key: <INPUT type="text" name="key" value="23" size="5">
+<INPUT type="button" value="Encode/Decode by Multiply/Divide" onClick="main.pad.value=showMultiplyEncodeDecode(main.msg.value,eval(main.bits.value),eval(this.form.key.value))"><BR>
+</FORM>
+Try to keep the chop size greater than 8, otherwise there are zeroes. The encode of zero is still zero with this coding. To check the computations, use this <a href="javascript:calculator()">calculator</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section4">Raise to a power</a></H3>
+<P>
+Instead of multiplying by the key k, we can multiply the number by itself, k times. This is raising each number to its k-th power. To decode, we need to undo this power raising: we take the k-th root of each receiving number.
+<P>
+These are the methods for encryption by raising power with key k:
+<UL>
+<LI>to encode, perform to each number (raise to k-th power) 
+<LI>to decode, perform to each number (take the k-th root)
+</UL>
+Click here for a demonstration.
+<FORM>
+Key: <INPUT type="text" name="key" value="5" size="3">
+<INPUT type="button" value="Encode/Decode by Power/Root" onClick="main.pad.value=showPowerEncodeDecode(main.msg.value,eval(main.bits.value),eval(this.form.key.value))"><BR>
+</FORM>
+Keep the power less than 8. This is to keep the <a href="javascript:calculator()">calculations</a> within precision.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section5">How good is the secret?</a></H3>
+<P>
+How secure are these coding schemes?
+<P>
+The art or science of breaking codes is called <i>cryptanalysis</i>. The technique depends heavily on statistical analysis. By collecting as much as possible the information about the numbers composing a secret message, a cryptanalyst can try a variety of tools to decode the message.
+<P>
+For the schemes above, it is straight-forward to break the codes by examining the range of the encoded numbers: the smallest and the largest of the encoded numbers. If the message is long enough message, the range can reveal the following:
+<UL>
+<LI>for addition encoding, the range is simply shifted, by the constant. The width of the range is a power of 2.
+<LI>for multiplication encoding, the range is expanded. The expanded range is the factor times a power of 2.
+<LI>for raising to power encoding, the range is greated expanded -- in fact, exploded. The maximum will be some power of a power of 2.
+</UL>
+<P>
+Indeed, for multiplication encoding, there is a simple way to extract the factor, if you know some math. The multiplying factor is the greatest common factor among the numbers. For the math people, computation of the greatest common factor (gcd) is a fast operation, because they don't need to even factorize either of the numbers.
+<P>
+Note that adding a constant does not change the result by much.
+But multiplying a constant affects the result: factor growth is acceptable.
+However, raising to a power greatly affects the result: power growth is powerful!
+<P>
+Whichever way, the resulting numbers expands the range of numbers being used. This range expansion creates inconveniences, and provides a clue to those trying to break your coding, as we have seen.
+<P>
+Is it possible to keep secrets by having numbers all within a convenient range? This is for <a href="pkey003.html">part 3</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<HR>
+Back to <a href="pkey.html">home</a>.
+</BODY>
+</HTML>

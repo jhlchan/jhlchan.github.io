@@ -1,0 +1,579 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption -- Part 5</TITLE>
+<SCRIPT LANGANGE="Javascript">
+<!-- Hide from other browers
+
+ASCII = " !" + '"' + "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ"
+
+// ascii -- return ASCII code of a character
+function ascii(c) {
+
+   return 32 + ASCII.indexOf(c)
+}
+
+// charOf -- return character given an ASCII code
+function charOf(n) {
+
+   return ASCII.charAt(n-32)
+}
+
+// decimal -- convert a list of symbols to ASCIIs, in decimal
+function decimal(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += ascii(m.charAt(j)) + ' '
+
+   return s
+}
+
+// decToBinary -- convert decimal to n-bit binary
+function decToBinary(x,n) {
+   var s = ''
+
+   for (var j = 0; j < n; j++) {
+      s = x%2 + s
+      x = Math.floor(x/2)
+   }
+
+   return s
+}
+
+// binary -- convert a list of symbols to ASCIIs, in binary
+function binary(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += decToBinary(ascii(m.charAt(j)),8) + ' '
+
+   return s
+}
+
+// noBlank -- remove blanks from a message
+function noBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) if (m.charAt(j) != ' ') s += m.charAt(j)
+
+   return s
+}
+
+// addBlank -- add blanks between characters
+function addBlank(m) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ' '
+
+   return s
+}
+
+// chop -- chop stream by n bytes
+function chop(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j++) s += m.charAt(j) + ((j+1)%n == 0 ? ' ' : '')
+
+   return s
+}
+
+// number -- express a stream of binary n-bytes by numbers
+function number(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += parseInt(m.substr(j,n),2) + ' '
+
+   return s
+}
+
+// pack -- pack a list of numbers into n-bit binary
+function pack(m,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += decToBinary(parseInt(m.substr(0,j)),n)
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// read -- read a stream of bits as n-bit binaries, and convert to ASCII
+function read(m,n) {
+   var s = ''
+
+   for (var j = 0; j < m.length; j += n) s += charOf(parseInt(m.substr(j,n),2))
+
+   return s
+}
+
+// format -- format a string to the required width
+function format(s,w) {
+
+   while (s.length < w) s = ' ' + s
+
+   return s
+}
+
+// range -- range of numbers when chopped by b-bits
+function range(b) {
+   var c = Math.pow(2,b)
+
+   return '2^' + b + '=' + c + ' numbers, from 0 to ' + (c-1) + '.'
+}
+
+// getChop -- get the chop bits value for modulo n
+function getChop(n) {
+   return Math.floor(Math.log(n)/Math.log(2)) // 2^j less than n
+}
+  
+// gcd -- compute the greatest common divisor of two numbers
+function gcd(a,b) { // Euclidean algorithm
+
+   if (a == 0) return b
+
+   while (b != 0) { // this version is faster if a > b
+      r = a%b
+      a = b
+      b = r
+   }
+   return a
+}
+
+// primeTo -- find a number relatively prime to p
+function primeTo(p) {
+   do {
+      q = Math.floor(p * Math.random())   // random q < p
+      if (q%2 == 0) q++                   // ensure q is odd
+   } while ((q == 1) || (gcd(p,q) != 1))  // q is not 1, and q is prime to p
+
+   return q
+}
+
+// inverseOf -- inverse of b in mod a, when a, b are relatively prime
+function inverseOf(b,a) { // extended Euclidean algorithm of gcd(a,b)
+   u1 = 1; u2 = 0; u3 = a // invariant: u1*a + u2*b = u3
+   v1 = 0; v2 = 1; v3 = b // invariant: v1*a + v2*b = v3
+
+   while (v3 != 0) { // this version faster if a > b
+      q = Math.floor(u3/v3)
+      r1 = u1 - q*v1
+      r2 = u2 - q*v2
+      r3 = u3 - q*v3
+
+      u1 = v1; u2 = v2; u3 = v3
+      v1 = r1; v2 = r2; v3 = r3
+   }
+   // when v3=0, u3=gcd, u1*a + u2*b = gcd = 1, or u2*b = 1 mod a
+
+   if (u2 < 0) u2 = u2 + a // make u2 positive
+   return u2
+}    
+
+// keygen -- generate the keys
+function keygen(form) {
+   var p = eval(form.prime1.options[form.prime1.selectedIndex].value)
+   var q = eval(form.prime2.options[form.prime2.selectedIndex].value)
+   if (p == q) {
+      alert("The primes P, Q should be different. Take P=17,Q=19.")
+      p = 17; q = 19
+   }
+
+   n = p*q
+   phi = (p-1)*(q-1)
+   e = primeTo(phi)
+   d = inverseOf(e,phi)
+
+   form.modulo.value = n
+   form.pubkey.value = e     // public is a reserved word in JavaScript
+   form.prvkey.value = d     // private is a reserved word in JavaScript
+   form.chop.value = getChop(n)
+}
+
+// euler -- compute the euler phi function of n
+function euler(n) { // phi(n) = how many number are relatively prime to n
+   var k = 0
+
+   for(var j = 1; j < n; j++) if (gcd(j,n) == 1) k++ 
+
+   return k
+}
+
+// keygenModulo -- generate the keys from any modulo
+function keygenModulo(form, isnew) {
+   var n = eval(form.modulo.value)
+   if (isnew) {
+      form.phi.value = 'computing ...'
+      var phi = euler(n)
+      form.phi.value = phi
+   }
+   
+   phi = eval(form.phi.value)
+   e = primeTo(phi)
+   d = inverseOf(e,phi)
+
+   form.modulo.value = n     // evaluation of modulo
+   form.pubkey.value = e     // public is a reserved word in JavaScript
+   form.prvkey.value = d     // private is a reserved word in JavaScript
+   form.chop.value = getChop(n)
+}
+
+// powerModulo -- compute Math.pow(a,b) % n  for positive b
+function powerModulo(a,b,n) {
+   g = 1;                          // g collects all the "odd" bits
+   while (b > 1) {
+      if (b%2 == 1) g = (g*a) % n; // when b is odd
+      a = (a*a) % n;               // squaring a
+      b = Math.floor(b/2);         // halving b
+   }
+   return (g*a) % n;
+}
+
+// timesModulo -- compute a*b % n  accurately
+function timesModulo(a,b,n) {
+   if (a > b) { var t = a; a = b; b = t }  // keep a <= b
+   
+   if (b < 50000000)            // JavaScript precision limit 5*10^7
+      return (a*b)%n            // simple computation
+   else {                       // use recursion
+      var t = 2*timesModulo(a,Math.floor(b/2),n)%n  // t = a*2[half b]
+      return (b%2 == 1 ? (t + a)%n : t)       // a*(2[half b] + 1) = t + a
+   }
+}
+
+// superPowerModulo -- compute Math.pow(a,b) % n  for positive b, more accurately
+function superPowerModulo(a,b,n) {
+   var g = 1                               // g collects all the "odd" bits
+   while (b > 1) {
+      if (b%2 == 1) g = timesModulo(g,a,n) // when b is odd
+      a = timesModulo(a,a,n)               // squaring a
+      b = Math.floor(b/2)                  // halving b
+   }
+   return timesModulo(g,a,n)
+}
+
+// rsa -- take rsa of a list of numbers:m^b % n
+function rsa(m,b,n) {
+   var s = ''
+
+   for (var j=m.indexOf(' '); (j > 0) && (m.length > 1); j=m.indexOf(' ')) {
+      s += superPowerModulo(parseInt(m.substr(0,j)),b,n) + ' '
+      j++
+      m = m.substr(j, m.length - j)
+   }
+
+   return s
+}
+
+// showRSA -- show RSA cipher with key pair (e,n) and (d,n)
+function showRSA(m,b,n,e,d) {
+   if (Math.pow(2,b) > n) {
+      alert('Chop value ' + b + ' is too large!')
+      return '2^' + b + '=' + Math.pow(2,b) + ' > ' + n + ', the modulo' + '\n'
+   }
+   while (8*m.length % b != 0) m += '~' // extends message
+   
+   var stream = noBlank(binary(m))
+   var s1 = number(stream,b)
+   var s2 = rsa(s1,e,n)
+   var s3 = rsa(s2,d,n)
+   var s4 = pack(s3,b)
+
+   return 'Chopping by ' + b + '-bits: there are ' + range(b) + '\n' +
+          'Modulo ' + n + ',' + 
+          ' Encode key=(' + e + ',' + n + '),' +
+          ' Decode key=(' + d + ',' + n + ').\n' +
+'from  NUMBER to ENCODE: raise each number to power ' + e + ', then take modulo ' + n + '.\n' +
+'from RECEIVE to DECODE: raise each number to power ' + d + ', then take modulo ' + n + '.\n\n' + 
+          'MESSAGE: ' + m + '\n' + 
+          ' 8-BITS: ' + binary(m) + '\n' + 
+          ' STREAM: ' + stream + '\n' +  
+   format('CHOP ' + b,7) + ': ' + chop(stream,b) + '\n' +
+          ' NUMBER: ' + s1 + '\n' +
+          ' ENCODE: ' + s2 + '\n' +
+          '\n' +
+          'RECEIVE: ' + s2 + '\n' +
+          ' DECODE: ' + s3 + '\n' + 
+   format(b + '-BITS',7) + ': ' + chop(s4,b) + '\n' +
+          ' STREAM: ' + s4 + '\n' +
+          ' CHOP 8: ' + chop(s4,8) + '\n' +
+          'MESSAGE: ' + read(s4,8) + '\n'
+}
+
+// explain -- pops up an explanation with title t and body b
+function explain(t,b) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>" + b + "</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainChop -- pops up an explanation of bits-chopping with title t
+function explainChop(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<TABLE width=100%>")
+   popup.document.writeln("<TR><TH align=LEFT>Chop size<TH align=LEFT>Chop numbers</TR>")
+   popup.document.writeln("<TR><TD>5-bits<TD>from 0 to 31</TR>")
+   popup.document.writeln("<TR><TD>6-bits<TD>from 0 to 63</TR>")
+   popup.document.writeln("<TR><TD>7-bits<TD>from 0 to 127</TR>")
+   popup.document.writeln("<TR><TD>8-bits<TD>from 0 to 255</TR>")
+   popup.document.writeln("<TR><TD>9-bits<TD>from 0 to 511</TR>")
+   popup.document.writeln("<TR><TD>10-bits<TD>from 0 to 1023</TR>")
+   popup.document.writeln("</TABLE>")
+   popup.document.writeln("<FORM>If chop size is <INPUT type='text' name='bits' value=5 size=3 onChange='this.form.nums.value=self.prev.range(eval(this.form.bits.value))'>-bits, you have: (change chop size and click elsewhere)<BR><INPUT type='text' name='nums' value='2^5=32 numbers, from 0 to 31.' size=55><BR></FORM>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// explainRSA -- pops up an explanation of RSA encoding with title t
+function explainRSA(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>The name RSA refers to three mathematicians (MIT professors), who are:<UL><LI>Ron Rivest<LI>Adi Shamir<LI>Leonard Adleman</UL>They invented their RSA algorithm in 1978.")
+   popup.document.writeln("<P>In hindsight, it seems strange that it took three mathematicians to pull out the trick -- the theory behind the trick is just the <b>Fermat-Euler theorem</b> of 1760s, more than three centuries ago. The theorem is well-known in mathematics, and can be found in any textbook on number theory.")
+   popup.document.writeln("<P>The truth is, no one has been thinking about applying number theory, a pure math subject, to cryptography, the black-art of encoding and decoding. Moreover, in cryptography, all encoding and decoding methods have always been using a <i>single</i> key. No one realizes that a pair of keys has certain advantages over a single key. The idea of a <i>pair of keys</i> for cryptography is first described by Diffie and Hellman, in 1976.")
+   popup.document.writeln("<P>Anyway, the three mathematicians proposed a scheme of devising a pair of keys for cyclic power-raising, with the property that, given the encode key (e,n), it is exceedingly difficult to compute the decode key (d,n) without knowing the <i>factorization</i> of the modulo n. This scheme can be made secure practically, and the <b>RSA method</b> is now the basis of several security proposals for message exchange over the Internet.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// explainFermatEuler -- pops up an explanation of Fermat-Euler Theorem with title t
+function explainFermatEuler(t) {
+   var popup = window.open("","","toolbar=no,status=no,width=500,height=300,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>" + t + "</TITLE>")
+   popup.document.writeln("<BODY>")
+   popup.document.writeln("<P>Fermat, while investigating the remainders of cyclic multiplication, found the following interesting relationship:<pre>Given a prime modulo p, we have:<br> <br>a<sup>(p-1)</sup> = 1  mod p, for all numbers a less than p.</pre>")
+   popup.document.writeln("This became known as <b>Fermat's Little Theorem</b>. Various mathematicians after him succeeded in providing a proof. Euler, a century later, also presented a proof.")
+   popup.document.writeln("<P>In the 1760s, Euler generalized this result to the following:<pre>Given a modulo n, prime or composite, we have:<br> <br>a<sup>phi(n)</sup> = 1  mod n, for all numbers a relatively prime to n.</pre>")
+   popup.document.writeln("Here phi(n) = count of numbers less than n and relatively prime to n. This function phi(n) is now called <b>Euler-phi function</b>.")
+   popup.document.writeln("<P>Since for a prime number p, all numbers less than itself are relatively prime to p, phi(p) = (p-1). Therefore Euler's statement is a generalization of Fermat's Little Thoerem. This generalized statement is now called <b>Fermat-Euler Theorem</b>.")
+   popup.document.writeln("<P>Euler gave a formula to compute the values for the Euler-phi function for various modulo n. However, the formula depends on the factorization of the number n. It is not known if there is a way to compute phi(n) without knowing the factorization of n. Most mathematicians suppose that this is very unlikely.")
+   popup.document.writeln("<P>Taking this generalized statement, one can deduce:<pre> a<sup>k * phi(n)</sup> = (a<sup>phi(n)</sup>)<sup>k</sup> = 1  mod n, for gcd(a,n)=1</pre> for any integer multiple k of phi(n).")
+   popup.document.writeln("Multiplying both sides by the number a, we have: <pre>a * a<sup>k * phi(n)</sup> = a<sup>1 + k * phi(n)</sup> = a  mod n, for gcd(a,n)=1</pre>")
+   popup.document.writeln("This can be rewritten as:<pre>a<sup>1 mod phi(n)</sup> = a  mod n, for gcd(a,n)=1</pre> because 1 mod phi(n) is a number, when divided by phi(n), leaves a remainder of 1.")
+   popup.document.writeln("<P>Moreover, when the modulo n is a product of distinct primes, one can actually drop the condition gcd(a,n) = 1 to have:<pre>a<sup>1 mod phi(n)</sup> = a  mod n,  for all numbers a if n = product of distinct primes.</pre>")
+   popup.document.writeln("<P>Therefore, if two powers e and d in cyclic power-raising of modulo n are to undo each other, the condition is:<pre>  e * d = 1  mod phi(n)</pre>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+}
+
+// asciiConverter -- pops up an ASCII converter
+function asciiConverter() {
+   var popup = window.open("","ASCII","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Converter</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a symbol: <INPUT type='text' name='ch' size='1' value='%'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=self.prev.ascii(this.form.ch.value);this.form.bin.value=self.prev.decToBin(self.prev.ascii(this.form.ch.value))'><BR>")
+   popup.document.writeln("ASCII value in decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("ASCII value in binary: <INPUT type='text' name='bin' size='9' value='00100101'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// asciiDecoder -- pops up an ASCII decoder
+function asciiDecoder() {
+   var popup = window.open("","DECODE","toolbar=no,status=no,width=400,height=150,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>ASCII Decoder</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Type a binary: <INPUT type='text' name='bin' size='9' value='00100101'>")
+   popup.document.writeln("<INPUT type='button' value='ASCII' onClick='this.form.dec.value=parseInt(this.form.bin.value,2);this.form.ch.value=self.prev.charOf(parseInt(this.form.bin.value,2))'><BR>")
+   popup.document.writeln("Binary as decimal: <INPUT type='text' name='dec' size='3' value='37'><BR>")
+   popup.document.writeln("Binary as symbol: <INPUT type='text' name='ch' size='1' value='%'><BR>")
+   popup.document.writeln("<P>Binary must be a valid 8-bit ASCII code to see a symbol.")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+// modPowerCalculator -- pops up an Modulo Power calculator
+function modPowerCalculator() {
+   var popup = window.open("","MODPOW","toolbar=no,status=no,width=300,height=30,resizable=1,scrollbars=1")
+   popup.document.writeln("<HTML><TITLE>Modulo Power Calculator</TITLE><BODY>")
+   popup.document.writeln("<FORM>")
+   popup.document.writeln("Modulo n: <INPUT type='text' name='n' size='5' value='97'><BR>")
+   popup.document.writeln("Number a: <INPUT type='text' name='a' size='5' value='21'>")
+   popup.document.writeln("Number b: <INPUT type='text' name='b' size='5' value='17'><BR>")
+   popup.document.writeln("a<SUP>b</SUP> mod n: <INPUT type='text' name='z' size='5' value='41'>")
+   popup.document.writeln("<INPUT type='button' value='COMPUTE' onClick='this.form.z.value=self.prev.superPowerModulo(eval(this.form.a.value),eval(this.form.b.value),eval(this.form.n.value))'><BR>")
+   popup.document.writeln("</BODY></HTML>")
+   popup.document.close()
+
+   popup.prev = self  // so that popup can refer back to this page
+}
+
+//-- End hiding -->
+</SCRIPT>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption -- Part 5: Cyclic Power</H2>
+<HR>
+<H3><a name="TOC">Table of Content</a></H3>
+<UL type="square">
+<LI><a href="#Section1">Power-raising in a Cycle</a>
+<LI><a href="#Section2">Bifactor Cycle</a>
+<LI><a href="#Section3">Key Pair Generation</a>
+<LI><a href="#Section4">How good is cyclic power encryption?</a>
+<LI><a href="#Section3">Public Key Encryption</a>
+</UL>
+<H3><a name="Section1">Power-raising in a Cycle</a></H3>
+<P>
+We have used cyclic addition or multiplication to generate a pair of keys for encoding and decoding. However, in both cases, the decode key can be easily computed from the encode code, given some knowledge in math. Can raising power in the cyclic world make any improvement?
+<P>
+Raising power means multiplying a number by itself, a certain number of times:
+<UL>
+<LI>Squaring is raising to the second power: x * x = x<sup>2</sup>.
+<LI>Cubing is raising to the third power: x * x * x = x<sup>3</sup>.
+</UL>
+If you multiply a number x by itself b times, you are raising the number x to power b, x<sup>b</sup>.
+<P>
+In the cyclic world of modulo n, you can raise number a to power b, and then divide by n to have its remainder. Or, since raising to power is repeated multiplication, you can take the remainder for each multiplication, so that you never need to deal with numbers greater than n. The process is written as:
+<pre>
+    a<sup>b</sup> mod n, or a^b mod n
+</pre>
+In the ordinary world, power-raising will get you very large numbers, and undoing that means to take roots (square-root, cube-root, etc.), which is an exceedingly tedious process.
+<P>
+In the cyclic world, power-raising will not give large numbers -- the result, being a remainder, is always less than the modulo. Just as there is no division in cyclic math, there is no root-taking in cyclic math. However, since we can undo cyclic addition by another addition, undo cyclic multiplication by another multiplication, perhaps we can undo cycle power-raising by another power-raising?
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section2">Bifactor Cycle</a></H3>
+<P>
+The math of cyclic power-raising is quite complicated. In fact, given a modulo n, it is <i>not</i> always possible to undo power-raising by another power-raising. However, if the modulo n is a product of <b>distinct</b> primes, this undoing is always possible. This means that, there is a way to generate two powers d and e, such that:
+<UL>
+<LI>The <b>encode key</b> is (e,n); that is, to encode, perform (raise to power e,  mod n) to each number of the message.
+<LI>The <b>decode key</b> is (d,n); that is, to decode, perform (raise to power d,  mod n) to each number of the coded message.
+</UL>
+This is <i>asymmetric</i> encryption, since a pair of keys is used. To simplify our discussion, we consider only modulo n which are <b>bifactors</b>, consisting of <i>two</i> distinct primes p and q only (that is, n = pq). How to generate the pair of keys will be discussed next. Accepting that this is possible, and choosing the chop size b to be the integer less than log<sub>2</sub>n (since chopping the data stream by chunks of b-bits means you get numbers <a href="javascript:explainChop('Chopping Up')">ranging</a> from 0 to 2<SUP>b</SUP>-1), we are ready to perform cyclic power encryption, or <a href="javascript:explainRSA('What is RSA encoding?')">RSA encoding</a>.
+<P>
+Here, you can pick two primes p and q, the product pq will be the modulo. Press the button "Generate" will generate the pair of keys for encoding and decoding. Type in a message, and press the "RSA" button to see cyclic power-raising encoding in action.
+<FORM name="gen">
+Pick two primes (p and q) &nbsp; &nbsp
+p:&nbsp;
+<SELECT name="prime1">
+<OPTION value="5">5
+<OPTION value="7">7
+<OPTION value="13">13
+<OPTION value="17" selected>17
+<OPTION value="23">23
+<OPTION value="29">29
+<OPTION value="43">43
+<OPTION value="101">101
+<OPTION value="109">109
+<OPTION value="223">223
+<OPTION value="509">509
+<OPTION value="1231">1231
+<OPTION value="5003">5003
+<OPTION value="9973">9973
+<OPTION value="10007">10007
+<OPTION value="34351">34351
+<OPTION value="77339">77339
+<OPTION value="90353">90353
+<OPTION value="99991">99991
+</SELECT>
+q:&nbsp;
+<SELECT name="prime2">
+<OPTION value="3">3
+<OPTION value="11">11
+<OPTION value="19" selected>19
+<OPTION value="31">31
+<OPTION value="37">37
+<OPTION value="41">41
+<OPTION value="47">47
+<OPTION value="103">103
+<OPTION value="107">107
+<OPTION value="211">211
+<OPTION value="503">503
+<OPTION value="1237">1237
+<OPTION value="10009">10009
+<OPTION value="47623">47623
+<OPTION value="47629">47629
+<OPTION value="83557">83557
+<OPTION value="90359">90359
+<OPTION value="99989">99989
+</SELECT>
+&nbsp;&nbsp;
+<INPUT type="button" value="Generate" onClick="keygen(this.form)">
+Modulo: <INPUT type="text" name="modulo" size="15" value="391"><BR>
+Encode: <INPUT type="text" name="pubkey" size="12" value="135">
+Decode: <INPUT type="text" name="prvkey" size="12" value="279">
+Chop stream into <INPUT type="text" name="chop" size="5" value="8">-bits binary.<BR>
+</FORM>
+<FORM name="main">
+<P>Type a message: <INPUT type="text" name="msg" value="My account is 3421." size="30">
+<INPUT type="button" value="RSA" onClick="this.form.pad.value=showRSA(this.form.msg.value,eval(gen.chop.value),eval(gen.modulo.value),eval(gen.pubkey.value),eval(gen.prvkey.value))"><BR>
+<TEXTAREA name="pad" rows="18" cols="90"> </TEXTAREA><BR>
+</FORM>
+You can verify the first step (from symbols to binary) by this <a href="javascript:asciiConverter()">ASCII converter</a>.<BR>
+You can verify the last step (from binary to symbols) by this <a href="javascript:asciiDecoder()">ASCII decoder</a>.
+<P>
+You can verify the calculations by this <a href="javascript:modPowerCalculator()">Modulo Power Calculator</a>.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section3">Key Pair Generation</a></H3>
+<P>
+With cyclic power encoding, when a number x is encoded, the coded number is: y = x<sup>e</sup> mod n.<BR>
+To decode the number y, we compute: y<sup>d</sup> mod n = (x<sup>e</sup>)<sup>d</sup> mod n = x<sup>(e * d)</sup> mod n.<BR>
+However, for the power-raising to undo each other, it is <i>not</i> that: e * d = 1 mod n.
+<P>
+Instead, from the <a href="javascript:explainFermatEuler('The Fermat-Euler Theorem')">Fermat-Euler theorem</a>, the correct condition is:
+<pre>
+         e * d = 1  mod phi(n)    for n = product of <i>distinct</i> primes
+</pre>
+where the symbol phi(n) is called the Euler's phi-function of n: it counts how many numbers less than the modulo n are relatively prime to n.
+<P>
+If the modulo n is a bifactor, that is, n = pq, then phi(n) = phi(pq) = (p-1)(q-1).
+<P>
+Therefore, once two different primes p and q are chosen, we have a bifactor n = pq. Then we can compute m = phi(n) = (p-1)(q-1). Just as in the case of key-pair generation of cyclic multiply encoding, we can choose a number e which is relatively prime to m (that is, gcd(e, m) = 1) as the encode key. Then we can use the extended Euclidean algorithm to compute the decode key d, which is the inverse of e in modulo m (that is, e * d = 1  mod m, or e * d = 1 mod phi(n)).
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section4">How good is cyclic power encryption?</a></H3>
+<P>
+Cyclic power encryption, or RSA encryption, uses a pair of keys e and d derived from the modulo n=pq, a bifactor. The relationship between the keys e and d is:  e * d = 1  mod phi(n), so you need to know phi(n) before you can apply standard math procedures to compute d from e.
+<P>
+Given a number n, the only known way to compute phi(n) is through its factorization. For example, if n = pq, then phi(n) = (p-1)(q-1).
+<P>
+The beauty of the RSA encryption is:
+<UL>
+<LI>Given two primes p and q, it is easy to compute their product n=pq, enabling the generation of a pair of keys (e,n) and (d,n) for encoding and decoding.
+<LI>Given the product n, it is exceedingly difficult to factorize n and thereby compute phi(n), making it almost impossible to compute (d,n) even if (e,n) is known, for sufficiently large modulo n, a bifactor: product of two primes.
+</UL>
+Since the decode key is difficult to find, even if the encode key is known, this scheme will be very secure indeed.
+<P>
+Indeed, RSA encryption is now the basis of several security protocols for message exchange over the Internet. In practical uses of RSA, primes more than 100-digits are routinely used.
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<H3><a name="Section5">Public Key Encryption</a></H3>
+<P>
+In the RSA scheme, it is very difficult to compute the decode key (d,n) even when the encode key (e,n) is known. Given this characteristics, this means that we can actually make the encode key public, and we just keep the decode key private. We can use the following terms:
+<UL>
+<LI>public key - the encode key</LI>
+<LI>private key -- the decode key</LI>
+</UL>
+<P>
+You can make the public key public by:
+<UL>
+<LI>sending the key to your partner without any encryption, or</LI>
+<LI>publish the key in a public-key directory, similar to the phone directory.</LI>
+</UL>
+In this way, anyone trying to send you something secret, be your partner or someone looking up your public key in the public-key directory, they can encode the message by the public key. Only you have the private key, and only you can decode and read the message. This is <b>content security</b>.
+<P>
+Alternatively, if you have something important to tell your partner, or the world, you can encode the message by your private key. Anyone can read your message by decoding that using the public key. Moreover, everyone knows that the message must be from you: since only you holds the private key. This is called <b>authentication</b>.
+<P>
+The RSA encryption can be applied for any modulo n which is a product of distinct primes. Here, you can choose any modulo n, not restricted to a bifactor. In fact, you can put in a product of factors. Click the "Generate" button, and the modulo value will be computed, along with its phi-function value. Then a pair of keys will be generated, as before. You can press "Anthor Pair" button for other pairs of keys. Click the "RSA Again" button and scroll up to see how this pair does encoding/decoding. However, unless your modulo number is a product of <a href="javascript:explain('Distinct prime products', '<TABLE width=100%><TR align=LEFT><TH>Prime factors<TH>Product</TR><TR><TD>5 * 7 * 11<TD>385</TR><TR><TD>7 * 11 * 13<TD>1001</TR><TR><TD>5 * 7 * 11 * 13<TD>5005</TR></TABLE><P>Type in a product and press <b>Compute</b>: <FORM name=z><INPUT TYPE=text NAME=expr SIZE=30 VALUE=5*7*11><INPUT TYPE=button VALUE=Compute onClick=z.ans.value=eval\(z.expr.value\)><INPUT TYPE=text NAME=ans SIZE=10 VALUE=385></FORM>')">distinct primes</a>, you'll find that the encoding/decoding breaks down.
+<FORM>
+Modulo: <INPUT type="text" name="modulo" size="15" value="17*23">
+<INPUT type="button" value="Generate" onClick="keygenModulo(this.form,true)">
+Phi(modulo): <INPUT type="text" name="phi" size="15" value="352">
+<INPUT type="button" value="Another Pair" onClick="keygenModulo(this.form,false)"><BR>
+Encode: <INPUT type="text" name="pubkey" size="12" value="289">
+Decode: <INPUT type="text" name="prvkey" size="12" value="257">
+Chop stream into <INPUT type="text" name="chop" size="5" value="8">-bits binary.
+<INPUT type="button" value="RSA Again" onClick="main.pad.value=showRSA(main.msg.value,eval(this.form.chop.value),eval(this.form.modulo.value),eval(this.form.pubkey.value),eval(this.form.prvkey.value))"> (scroll up to view result.)<BR>
+</FORM>
+<P ALIGN=RIGHT>Back to <a href="#TOC">table of content</a>
+<HR>
+Back to <a href="pkey.html">home</a>.
+</BODY>
+</HTML>

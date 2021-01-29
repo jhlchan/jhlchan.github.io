@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<TITLE>Public Key Encryption</TITLE>
+</HEAD>
+<BODY>
+<H2 ALIGN=CENTER>Public Key Encryption</H2>
+<HR>
+<P>
+This is an introduction to <b>public key encryption</b>, the modern method of sending and receiving messages that you don't want others to read. The idea will unfold in the following parts:
+<UL>
+<LI><a href="pkey001.html">Part 1: Sending Messages</a>
+<LI><a href="pkey002.html">Part 2: Sending Numbers</a>
+<LI><a href="pkey003.html">Part 3: Cyclic Add</a>
+<LI><a href="pkey004.html">Part 4: Cyclic Multiply</a>
+<LI><a href="pkey005.html">Part 5: Cyclic Power</a>
+</UL>
+<P>
+We are sending messages using computers, which are machines that understand only numbers. In fact, only binary numbers 0 and 1, called <b>bits</b>. Each message will be converted into bits before being handled by the computer. While there is a standard way to convert characters to bits, the <b>ASCII</b>, there are many ways to look at a stream of bits as a stream of numbers.
+<P>
+Once we have a stream of numbers, we can play tricks on the numbers so that others cannot easily undo the trick. The best number tricks are those from <b>cyclic arithmetic</b>, where every arithmetic result is divided by a <b>modulo</b>, leaving only a remainder. The remainder cuts out a lot of information of the original calculation, and you'll need some pretty good background in a branch of mathematics, known simply as <b>number theory</b>, to undo tricks from cyclic math.
+<P>
+To apply a trick to hide the information is called <b>encoding</b>, or encryption.
+<P>
+To undo the trick to reveal the information is called <b>decoding</b>, or decryption.
+<P>
+Usually, to decode, you just do the encode in reverse. This is similar to using a key to both lock and unlock a door. If you think this idea of <b>single key encryption</b> is the only way to hide secrets, you are wrong.
+<P>
+With cyclic math, there is a way to undo not by doing in reverse, by doing in the same way as encode, but using a different key. This is similar to Columbus' travelling to "India" by going west, instead of going east, because the Earth is round. This idea of <b>key pair encryption</b> is possible only in the world of cyclic math.
+<P>
+Using a pair of keys, you can encode using one key, the <b>encode key</b>, and decode using another key, the <b>decode key</b>, but applying the same method -- all happening in cyclic math:
+<UL>
+<LI>For <b>cyclic add</b>, the decode key is easily computed from the encode key, so you'll lose your secret magic if someone knows your encode key.
+<LI>For <b>cyclic multiply</b>, the decode key can still be computed from the encode key with some knowledge of number theory, so you're still not safe if someone knows your encode key.
+<LI>For <b>cyclic power</b>, the decode key can only be computed from the encode key with the knowledge of the factors of the modulo. Though not mathematically proven, it is generally believe that it is easy to multiply but hard to factorize. Even if someone knows your encode key, he or she cannot compute the decode key without knowing the factors involved.
+</UL>
+In the last situation, you can actually make the encode key <b>public</b>, just keeping the decode key <b>private</b>. With current knowledge and technology, no one can compute the private key without factorizing the modulo. This is the essence of <b>public key encryption</b>, the modern basis of security on the Internet.
+<HR>
+</BODY>
+</HTML>

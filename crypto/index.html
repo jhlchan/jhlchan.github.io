@@ -1,0 +1,575 @@
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>Cryptography</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() { 
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>Cryptography</br>
+<small><small>the science of secret writing</small></small></h1>
+
+We shall concentrate on the math behind the RSA cryptography.
+<p>
+The math is based on <b>modular arithmetic</b>, or cyclic math.
+What is Cyclic Math?
+The simplest math is arithmetic: we all learn how to add, subtract, multiply and divide. All these originate from counting.
+Let us begin with an example.
+
+<h2>Weekday Counting</h2>
+Here is a challenge for counting: what is the first day of the week?
+<p>
+I have two answers, so I check with Google. Oops, there are 3 answers! For an interesting discussion, see【1】.
+<p>
+Anyway, most people will say weekday one is Monday. In math, this is expressed as a function:</br>
+weekday(1) = Monday, weekday(2) = Tuesday, etc.
+<p>
+The next counting problem arises: should the index count from 1 or 0? That is, should we have weekday(7) as Sunday?
+<p>
+Math people opt for counting from 0. Programmers are math people, and they use an array, with square brackets [] marking the index: weekday[0] = Sunday, weekday[1] = Monday, etc.
+<p>
+This is the root of a programming quirk: when you define an array with n slots, and access each element by its index j, then a[j] is valid only for j = 0 to n - 1: using a[n] will lead to an "out of bound" or "out of range" error.
+<p>
+In summary, weekday counts are: 0, 1, 2, 3, 4, 5, 6 -- just 7 numbers.
+After that the counting repeats: that's cyclic math!
+
+<h2>Cyclic Add and Subtract</h2>
+What day is Monday after 10 days? The first 7 days form a cycle, so only the 3 remaining days count, giving 1 + 3 = 4, that is, Thursday. In general, any multiple of 7 can be discarded, only the remainder is useful. In this way, the addition table for cycle 7 can be easily constructed: the table on the left is ordinary addition, the table on the right reduces each entry to a remainder after division by 7.
+<pre>
++ | 1  2  3  4  5  6    + (mod 7) | 1 2 3 4 5 6
+--|-----------------   -----------|------------
+1 | 2  3  4  5  6  7            1 | 2 3 4 5 6 0
+2 | 3  4  5  6  7  8            2 | 3 4 5 6 0 1
+3 | 4  5  6  7  8  9            3 | 4 5 6 0 1 2
+4 | 5  6  7  8  9 10            4 | 5 6 0 1 2 3
+5 | 6  7  8  9 10 11            5 | 6 0 1 2 3 4
+6 | 7  8  9 10 11 12            6 | 0 1 2 3 4 5
+</pre>
+We don't need to show the trivial ones such as: 0 + 4 = 4, but 0 does appear as a sum: 2 + 5 becomes 0 in this system, because 7 is discarded, only the remainder 0 matters. For clarity, math people write this as: (2 + 5) mod 7 = 0, where 'mod 7' means 'under modulus 7', that is, remainder after division by 7.
+<p>
+Let x and y be any of the nonzero remainders of mod 7. The entry at row x and column y represents (x + y) for ordinary addition on the left, or (x + y) mod 7 for modular addition on the right. Since x + (y + 1) = (x + y) + 1, both tables can be constructed column by column. First, write down x: list vertically all the nonzero reminders of mod 7. The first column simply adds 1 to each of the leftmost, taking 7 as 0 for cyclic math. Then for each column y, add 1 to form the next column (y + 1), using cyclic math for the table on the right. Keep adding 1 for all the successive columns to produce the resulting tables.
+<p>
+Look again at (2 + 5) mod 7 = 0. This means, in cyclic math, or modular arithmetic, adding up can give a result zero. This is because two ants going in opposite directions will meet in this cyclic world. Indeed, in mod 7, +5 (forward 5 steps) is the same as -2 (backward 2 steps): -2 mod 7 = 5. Negative numbers can be converted to positive in modular arithmetic:
+-1 mod 7 = 6, -2 mod 7 = 5, etc. until -6 mod 7 = 1.
+<pre>
+-1 mod 7 = 6, because (1 + 6) mod 7 = 0.
+-2 mod 7 = 5, because (2 + 5) mod 7 = 0.
+-3 mod 7 = 4, because (3 + 4) mod 7 = 0.
+-4 mod 7 = 3, because (4 + 3) mod 7 = 0.
+-5 mod 7 = 2, because (5 + 2) mod 7 = 0.
+-6 mod 7 = 1, because (6 + 1) mod 7 = 0.
+</pre>
+This enables modular subtraction to be done, using the idea: x - y = x + (- y).
+<p>
+Thus (4 - 3) mod 7 = (4 + (-3)) mod 7 = (4 + 4) mod 7 = 1. Of course, we could have done it faster: (4 - 3) mod 7 = 1 mod 7 = 1, but this just shows everything is consistent. Try doing (3 - 5) mod 7 in anyway you like.
+<p>
+So cyclic add and subtract can be done, with the result always within 0 to 6, the possible remainders of division by 7. How about the other arithmetic operations?
+
+<h2>Cyclic Multiply and Divide</h2>
+Similar to the addition table of cycle 7, or modulo 7, we can construct the multiplication table: (the table on the left is ordinary multiplication, the table on the right reduces each entry to a remainder after division by 7.)
+<pre>
+* | 1  2  3  4  5  6    * (mod 7) | 1 2 3 4 5 6
+--|-----------------   -----------|------------
+1 | 1  2  3  4  5  6            1 | 1 2 3 4 5 6
+2 | 2  4  6  8 10 12            2 | 2 4 6 1 3 5
+3 | 3  6  9 12 15 18            3 | 3 6 2 5 1 4 
+4 | 4  8 12 16 20 24            4 | 4 1 5 2 6 3
+5 | 5 10 15 20 25 30            5 | 5 3 1 6 3 2
+6 | 6 12 18 24 30 36            6 | 6 5 4 3 2 1
+</pre>
+Again, we don't need to show the trivial ones such as: 1 &#8270; 3 = 3.
+We can construct the multiplication tables column by column.
+Let x and y be any of the nonzero remainders of mod 7. The entry at row x and column y represents (x &#8270; y) for ordinary multiplication on the left, or (x &#8270; y) mod 7 for modular multiplication on the right.
+First write down x: list vertically all the nonzero reminders of mod 7,
+then apply x &#8270; (y + 1) = (x &#8270; y) + x.
+The first column is simply multiplying each by 1, so it is just a copy of the leftmost remainders.
+Then add this column y with the leftmost column x to form the next column (y + 1), using cyclic math, or mod 7 for table on the right. Keep adding with the leftmost column x for all the successive columns to produce the multiplication tables.
+<p>
+Note that 0 does not appear in the mod 7 multiplication table. Why?
+<p>
+Look at the remainders after division by 7. They are 0 to 6, all less than 7. Let x, y be two of them. If (x &#8270; y) mod 7 = 0, then (x &#8270; y) is a multiple of 7, or x &#8270; y = 7 &#8270; k for some number k. But 7 is as prime, meaning it cannot be broken further. Thus either x = 7, y = 1, or x = 1, y = 7, with k = 1. But this is impossible, as x and y are remainders less than 7.
+<p>
+As a result, (x &#8270; y) mod 7 is nonzero whenever x and y are nonzero. Putting this in another way:
+<p>
+<mark>  
+Result #1: in mod 7 multiplication, the product of nonzeroes is nonzero.
+</mark>
+<p>
+Due to this, every row in the mod 7 multiplication table is distinct. For example, take the row with multiplier 3. The row consists of the products (3 &#8270; x) mod 7, for x from 1 to 6. What happens if (3 &#8270; x) mod 7 = (3 &#8270; y) mod 7, with y &ne; x but also from 1 to 6? Well, moving the right side to the left side, we have: (3 &#8270; (x - y)) mod 7 = 0 and y &ne; x means (x - y) &ne; 0. By Result #1, this is impossible!
+<p>
+Because x runs through all remainders, and (3 &#8270; x) mod 7 are all distinct, the row of multiplier 3 is a permutation of the remainders. This is true for every row, with the multiplier a remainder:
+<p>
+<mark>
+Result #2: each nonzero row of the mod 7 multiplication table is a permutation of the nonzero remainders.
+</mark>
+<p>
+In particular, 1 is nonzero, so 1 appears somewhere within each row. This means, for x from 1 to 6, there is always a y, also from 1 to 6, that gives (x &#8270; y) mod 7 = 1. Such a y is called the <b>inverse</b> of x in mod 7, denoted by y = (1/x) mod 7.
+<p>
+From the mod 7 multiplication table, we find:
+<pre>
+(1/1) mod 7 = 1, because (1 * 1) mod 7 = 1.
+(1/2) mod 7 = 4, because (2 * 4) mod 7 = 1.
+(1/3) mod 7 = 5, because (3 * 5) mod 7 = 1.
+(1/4) mod 7 = 2, because (4 * 2) mod 7 = 1.
+(1/5) mod 7 = 3, because (5 * 3) mod 7 = 1.
+(1/6) mod 7 = 6, because (6 * 6) mod 7 = 1.
+</pre>
+Recall that -1 mod 7 = 6, thus (1/6) mod 7 = (1/-1) mod 7 = -1 mod 7 = 6, all good!
+<p>
+This enables modular division to be done for mod 7, using the idea: x / y = x &#8270; (1/y).
+<p>
+Of course the divisor y cannot be 0, or y is nonzero, and (1/y) mod 7 is defined.
+Thus</br>
+(4 / 3) mod 7 = (4 &#8270; (1/3)) mod 7 = (4 &#8270; 5) mod 7 = 20 mod 7 = 6.</br>
+To verify: (3 &#8270; 6) mod 7 = 18 mod 7 = 4. okey dokey.
+<p>
+So within mod 7, arithmetic poses no problem: cyclic add and subtract can be done, and cylic multiply and divide can be done, provided division by zero is forbidden. Let state this succinctly:
+<p>
+<mark>
+Result #3: mod 7 arithmetic is good: add, subtract, multiply and divide by nonzero all works fine.
+</mark>
+
+<h2>Group, Ring and Field</h2>
+In math, there is a branch called <b>abstract algebra</b>. Math people would consider a set of symbols, with a binary operation between symbols. For example, take mod 7 multiplication. The set of symbols is the nonzero remainders. The binary operation is (&#8270; mod 7).
+<p>
+For convenience, math people resue &#8270; for a binary operation in general, between symbols x, y, z, etc.
+When the symbols and the binary operation satisfy these properties:
+<ul>
+<li>associative, that is (x &#8270; y) &#8270; z = x &#8270; (y &#8270; z) for symbols x, y, z;</li>
+<li>has an identity, that is a unit 1 such that 1 &#8270; x = x for all symbols x;</li>
+<li>has an inverse for each symbol x, that is 1/x is another symbol and x &#8270; 1/x = 1;</li>
+</ul>
+then the symbols is said to form a <b>group</b> under the binary operation.
+<p>
+Therefore, Result #2 becomes: <mark>nonzero mod 7 remainders form a group under modular multiplication, with identity 1.</mark></br>
+Of course, we can also verify this: <mark>all mod 7 remainders form a group under modular addition, with identity 0.</mark>
+<p>
+When a set of symbols has two binary operations, say + and &#8270;, with the properties:
+<ul>
+<li>(a) the symbols forms a group under + with identity 0,</li>
+<li>(b) the symbols are associative under &#8270;, and</li>
+<li>(c) the &#8270; distributes over +, that is  (x + y) &#8270; z = x &#8270; z + y &#8270; z holds,</li>
+</ul>
+then the symbols is said to form a <b>ring</b> under two binary operations.
+<p>
+Moreover, if the condition (b) can be tightend to:
+<ul>
+<li>(b') the symbols other than 0 also forms a group under &#8270; with identity 1,</li>
+</ul>
+then the symbols is said to form a <b>field</b> under two binary operations.
+<p>
+Therefore, Result #3 becomes: <mark>all mod 7 remainders form a field under modular addition and multiplication</mark>.
+<p>
+That is, like arithmetic, we can do all sorts of things for just 7 symbols: 0, 1, 2, 3, 4, 5, 6.</br>
+Solve (4 &#8270; x + 2) mod 7 = 1 for x. Easy: x = (1 - 2)/4 mod 7 = -1/4 mod 7 = -2 mod 7 = 5.</br>
+Can you verify the solution?
+<p>
+Are you brave enough to go further? I mean, go higher?
+
+<h2>Cyclic Power</h2>
+Similar to the multiplication table of mod 7, we can construct the power table, where:
+x ^ n = x<sup>n</sup> = x &#8270; x &#8270; ... &#8270; x,  over n of them. 
+Thus for row x, the entries are: x<sup>1</sup>, x<sup>2</sup>, x<sup>3</sup>, up to x<sup>6</sup>.
+We just keep multiplying the result by the mutliplier x. First, we do this the hard way: the table on the left shows ordinary successive powers, the table on the right reduces each entry to a remainder after division by 7.
+<pre>
+^ | 1  2   3    4    5     6    ^ (mod 7) | 1 2 3 4 5 6
+--|-------------------------   -----------|------------
+1 | 1  1   1    1    1     1            1 | 1 1 1 1 1 1
+2 | 2  4   8   16   32    64            2 | 2 4 1 2 4 1
+3 | 3  9  27   81  243   729            3 | 3 2 6 4 5 1 
+4 | 4 16  64  256 1024  4096            4 | 4 2 1 4 2 1
+5 | 5 25 125  625 3125 15625            5 | 5 4 6 2 3 1
+6 | 6 36 216 1296 7776 46656            6 | 6 1 6 1 6 1
+</pre>
+Again, we don't need to show the trivial ones such as: 4<sup>0</sup> = 1.
+To construct these tables column by column, let x be any of the nonzero remainders of mod 7.
+The entry at row x and column n represents (x<sup>n</sup>) for ordinary power on the left, or (x<sup>n</sup>) mod 7 for modular power on the right.
+First write down x: list vertically all the nonzero reminders of mod 7,
+then apply x<sup>(n + 1)</sup> = x<sup>n</sup> &#8270; x.
+The first column is simply raising each by power 1, so it is just a copy of the leftmost remainders.
+Then multiply this column n with the leftmost column x to form the next column (n + 1), using cyclic math, or mod 7 for table on the right. Keep multiplying with the leftmost column x for all the successive columns to produce the power tables, or exponentiation tables.
+<p>
+The rows are not distinct anymore. Note that the first row, the exponents of 1, are all 1: that's simple.
+However, the last column, of exponent 6 for every nonzero x, is always 1. Why?
+<p>
+To see this, recall Result #2: each nonzero row of the mod 7 multiplication table is a permutation of nonzero remainders.
+<p>
+Take x = 3. Then for y = 1 to 6, 3 &#8270; y is a permutation of 1 to 6 again. That is:
+<pre>
+(3 * 1) mod 7 = 3
+(3 * 2) mod 7 = 6
+(3 * 3) mod 7 = 2
+(3 * 4) mod 7 = 5
+(3 * 5) mod 7 = 1
+(3 * 6) mod 7 = 4
+</pre>
+Due to permutation, each nonzero appears once and only once on the right.
+Multiplying all of them and taking mod 7:</br>
+(3 &#8270; 1) &#8270; (3 &#8270; 2) &#8270; (3 &#8270; 3) &#8270; (3 &#8270; 4) &#8270; (3 &#8270; 5) &#8270; (3 &#8270; 6) mod 7 = (3 &#8270; 6 &#8270; 2 &#8270; 5 &#8270; 1 &#8270; 4) mod 7
+<p>
+But the right-hand side is just z = (1 &#8270; 2 &#8270; 3 &#8270; 4 &#8270; 5 &#8270; 6) mod 7, since multiplication of numbers can be re-arranged and they form a permutation. For the left-hand side, we can take out all the 3's, and there are 6 of them. Therefore:
+(3<sup>6</sup> &#8270; z) mod 7 = z
+<p>
+Note that z is nonzero since it is the product of all nonzero in mod 7, by Result #1.
+So z has an inverse 1/z, which can be used to multiply both sides:
+(3<sup>6</sup> &#8270; z &#8270; 1/z) mod 7 = (z &#8270; 1/z) mod 7 = 1 mod 7 = 1
+<p>
+By property of multiplicative inverse, this simplifies to
+(3<sup>6</sup>) mod 7 = 1 mod 7 = 1
+<p>
+<!--
+Another way:
+(product of all 3 &#8270; y) mod 7 = (product of all y) mod 7
+<p>
+Taking out all the 3's, and there are 6 of them, we have:
+(3<sup>6</sup>) &#8270; (product of all y) mod 7 = (product of all y) mod 7
+<p>
+Let z = (product of all y) mod 7. Since product of all nonzero in mod 7 is also nonzero, by Result #1, z is nonzero, and it has an inverse:
+(3<sup>6</sup> &#8270; z &#8270; 1/z) mod 7 = (z &#8270; 1/z) mod 7 = 1 mod 7 = 1
+<p>
+-->
+This reasoning holds for any nonzero remainder x, therefore:
+<p>
+<mark>
+Result #4: for any nonzero remainder x, x<sup>6</sup> mod 7 = 1.
+</mark>
+<p>
+
+<h2>Fermat's Little Theorem</h2>
+Of course, 6 = 7 - 1, and 7 is a prime. All the logic of mod 7 arithmetic applies for mod p arithmetic, for a prime p. Therefore we have:
+<p>
+<ul>  
+<li>Result #1 for prime p: </br>
+<mark>Theorem #1: in mod p multiplication for prime p, the product of nonzeroes is nonzero.</mark></li>
+<li>Result #2 for prime p: </br>
+<mark>Theorem #2: in mod p multiplication for prime p, each nonzero row is a permutation of nonzero remainders.</mark></li>
+<li>Result #3 for prime p:</br>
+<mark>Theorem #3: all mod p remainders for prime p form a field under modular addition and multiplication.</mark></li>
+<li>Result #4 for prime p has a name:</br>
+<mark>Theorem #4 (Fermat's Little Theorem): for x nonzero and prime p, x<sup>(p-1)</sup> mod p = 1.</mark></li>
+</ul>  
+<p>
+The last result is first stated by a French mathematician, Pierre de Fermat, in 1640. Before 1940, everyone admires this result in number theory, but no one knows any use of it.
+
+<h2>Eight Day A Week</h2>
+Do you like music? My music is in the '60s, when there was the Beatles, with a song titled "Eight Day A Week" (you can find that on YouTube). This is replacing, hypothetically, the 7-cycle of weekdays with an 8-cycle.
+What is the situtation for cycle 8 arithemtic, or arithmetic in mod 8, where 8 is not a prime?
+<p>
+First, the mod 8 addition is nothing unusual:
+<pre>
++ | 1  2  3  4  5  6  7    + (mod 8) | 1 2 3 4 5 6 7
+--|--------------------   -----------|--------------
+1 | 2  3  4  5  6  7  8            1 | 2 3 4 5 6 7 0
+2 | 3  4  5  6  7  8  9            2 | 3 4 5 6 7 0 1
+3 | 4  5  6  7  8  9 10            3 | 4 5 6 7 0 1 2 
+4 | 5  6  7  8  9 10 11            4 | 5 6 7 0 1 2 3
+5 | 6  7  8  9 10 11 12            5 | 6 7 0 1 2 3 4
+6 | 7  8  9 10 11 12 13            6 | 7 0 1 2 3 4 5
+7 | 8  9 10 11 12 13 14            7 | 0 1 2 3 4 5 6
+</pre>
+and negatives of mod 8 can be computed:
+<pre>
+-1 mod 8 = 7, because (1 + 7) mod 8 = 0.
+-2 mod 8 = 6, because (2 + 6) mod 8 = 0.
+-3 mod 8 = 5, because (3 + 5) mod 8 = 0.
+-4 mod 8 = 4, because (4 + 4) mod 8 = 0.
+-5 mod 8 = 3, because (5 + 3) mod 8 = 0.
+-6 mod 8 = 2, because (6 + 2) mod 8 = 0.
+-7 mod 8 = 1, because (7 + 1) mod 8 = 0.
+</pre>
+Thus in mod 8, we can perform addition and subtraction as before. However, mod 8 multiplication looks like this:
+<pre>
+* | 1  2  3  4  5  6  7    * (mod 8) | 1 2 3 4 5 6 7
+--|--------------------   -----------|--------------
+1 | 1  2  3  4  5  6  7            1 | 1 2 3 4 5 6 7
+2 | 2  4  6  8 10 12 14            2 | 2 4 6 0 2 4 6
+3 | 3  6  9 12 15 18 21            3 | 3 6 1 4 7 2 5
+4 | 4  8 12 16 20 24 28            4 | 4 0 4 0 4 0 4
+5 | 5 10 15 20 25 30 35            5 | 5 2 7 4 1 6 3
+6 | 6 12 18 24 30 36 42            6 | 6 4 2 0 6 4 2
+7 | 7 14 21 28 35 42 49            7 | 7 6 5 4 3 2 1
+</pre>
+The rows have repetitions, they are not permutations of the remainders. There are nonzero products giving 0. This is because 8 is not a prime, having 8 = 2 &#8270; 4, a product of two smaller numbers, and (2 &#8270; 4) mod 8 = 0.
+<p>
+Even worse, 1 does not appear in every row, meaning 1/x is undefined for some nonzero x. This is a disaster!
+<p>
+How to redeem from such a disaster? A Swiss mathematician Euler (pronounced oiler) who studied Fermat's Little Theorem found a way out, using the concept of relatively prime, or <b>coprime</b>.
+<p>
+We need to digress. A number is a prime if its only proper divisor is 1. The corresponding idea for a pair of numbers is their common divisor. Given a pair of numbers x and y, of course 1 is always a common divisor of them. If x and y are even, then 2 is a common divisor of both. In general, we are interested in their greatest common divisor, denoted by gcd(x,y). The ancient Greek mathematician Euclid, famous for his book of geometry, handed down an efficient method to compute gcd(x,y), but that is straying too far from our path.
+<p>
+Anyway, two numbers are <b>coprime</b> when their only common divisor is 1. In other words, x and y are coprime if and only if gcd(x,y) = 1.
+<p>
+What Euler discoverd is this: in the mod 8 multiplication table, if we pick out the remainders that are coprime to 8, the reduced table is actually quite nice!
+<p>
+First, determine which remainders are coprime to 8. There are only four: 1, 3, 5, 7, the odd ones:
+<pre>
+ * (mod 8)| 1 3 5 7
+ ---------|--------
+        1 | 1 3 5 7
+        3 | 3 1 7 5
+        5 | 5 7 1 3
+        7 | 7 5 3 1
+</pre>
+Now each row is a permutation of coprime remainders, and 1 appears in every row, giving:
+<pre>
+(1/1) mod 8 = 1, because (1 * 1) mod 8 = 1.
+(1/3) mod 8 = 3, because (3 * 3) mod 8 = 1.
+(1/5) mod 8 = 5, because (5 * 5) mod 8 = 1.
+(1/7) mod 8 = 7, because (7 * 7) mod 8 = 1.
+</pre>
+Thus, as long as we stay within coprime remainders, division works fine. Recall the definition of a group, we have:
+<p>
+<mark>
+Result #5: in mod 8, remainders coprime to 8 form a group under multiplication.
+</mark>
+<p>
+How many symboles in this group, for mod n in general? This is counting how many remainders are coprime to n. Except for special cases of n (which we will see later on), there is no formula for it. Surely one can check every gcd(x,n) for x = 1 to (n-1). Math people used a symbol for this function, using the Greek letter phi: φ, and put a name on it:</br>
+<mark>Euler's phi function: phi(n) = φ(n) = number of coprimes to n and not exceeding n.</mark>
+<p>
+For example, φ(8) = 4, as the odds are coprime to 8. We can investigate power in mod 8 for exponents up to φ(8):
+<pre>
+ ^ | 1  2   3    4   ^ (mod 8) | 1 2 3 4
+---|--------------   ----------|--------
+ 1 | 1  1   1    1           1 | 1 1 1 1
+ 3 | 3  9  27   81           3 | 3 1 3 1
+ 5 | 5 25 125  625           5 | 5 1 5 1
+ 7 | 7 49 343 2401           7 | 7 1 7 1
+</pre>
+The last column is 1 because of the same idea as before.
+Take row 5 from the mod 8 multiplication table. If we multiply 5 only to coprimes to 8:
+<pre>
+(5 * 1) mod 8 = 5
+(5 * 3) mod 8 = 7
+(5 * 5) mod 8 = 1
+(5 * 7) mod 8 = 3
+</pre>
+Multiplying all these equations,
+(5<sup>4</sup> &#8270; z) mod 8 = z, where z = (1 &#8270; 3 &#8270; 5 &#8270; 7) mod 8.
+Cancelling z,
+5<sup>4</sup> mod 8 = 1.
+<p>
+Running through the same argument from Result #3 to Result #4, we have:</br>
+<mark>
+Theorem #5 (Euler's generalisation of Fermat's Little Theorem): for x coprime to n, x<sup>φ(n)</sup> mod n = 1 for any nonzero n.
+</mark>
+<p>
+For a prime p, all nonzero remainders are coprime to p, thus φ(p) = p - 1, and we recover Fermat's Little Theorem.
+<p>
+In general, we have this property for Euler's ϕ function:</br>
+<mark>
+Theorem #6: if two numbers n and m are coprime, ϕ(m &#8270; n) = ϕ(m) &#8270; ϕ(n).
+</mark>
+<p>
+We shall skip the proof of this result, as it requires some knowledge of number theory.
+<p>
+Applying this result, let n = p &#8270; q, a product of two primes p and q.
+Then</br> ϕ(n) = ϕ(p &#8270; q) = ϕ(p) &#8270; ϕ(q) = (p - 1) &#8270; (q - 1).</br>
+For example, φ(6) = φ(2) &#8270; φ(3) = 1 &#8270; 2 = 2.
+Indeed, only 1 and 5 are coprime to 6 and not exceeding 6.
+
+<!--
+Moreover, let n = p &#8270; q, a product of two primes p and q. An example is n = 2 &#8270; 3 = 6, and 2 and 3 are primes. Only 1 is coprime to 2 and not exceeding 2, so φ(2) = 1. Both 1 and 2 are coprime to 3 and less than 3, so φ(3) = 2. Or we can apply the formula φ(p) = p - 1 for prime p to deduce these results.
+<p>
+What is φ(6)? Direct counting shows only 1, 5 are coprime to 6 and not exceeding 6, so φ(6) = 2. But can φ(6) be deduced from φ(2) and φ(3) ?
+<p>
+Let ϕ(n) = the set of remainders coprime to n and not exceeding n.
+Then ϕ(2) = {1}, ϕ(3) = {1,2}
+We shall show ϕ(6) = {z = (3 &#8270; x + 2 &#8270; y) mod 6 | x ∈ ϕ(2), y ∈ ϕ(3)}.
+(1,1) corresponds to z = (3 &#8270; 1 + 2 &#8270; 1) mod 6 = 5, right!
+(1,2) corresponds to z = (3 &#8270; 1 + 2 &#8270; 2) mod 6 = 1, right!
+<p>
+Any z in ϕ(6) must have gcd(z,6) = 1, so there are x and y such that x &#8270; z + 6 &#8270; y = 1.
+This shows gcd(x,6) = 1, so x in ϕ(6), too.
+But gcd(2,3) = 1, so there are h k such that 2 &#8270; h + 3 &#8270; k = 1.
+Thus x &#8270; z + 6 &#8270; y = 2 &#8270; h + 3 &#8270; k
+In mod 6,  (x &#8270; z) mod 6 = (2 &#8270; h + 3 &#8270; k) mod 6
+Since x IN ϕ(6), x has 1/x, so z = (3 &#8270; k &#8270; 1/x + 2 &#8270; h &#8270; 1/x) mod 6,
+and (k &#8270; 1/x) IN ϕ(2), and (h &#8270; 1/x) IN ϕ(3)?
+<p>
+
+Use Chinese remainder theorem:
+If a, b are coprime, than gcd(n, ab) = 1 iff gcd(n,a) = 1 and gcd(n,b) = 1.
+
+Of course, two primes are coprime, so gcd(n,6) = 1 iff gcd(n,2) = 1 and gcd(n,3) = 1.
+For n = 1,2,3,4,5,
+g(n,2) = 1 for 1, 3, 5
+g(n,3) = 1 for 1, 2, 4, 5
+Their intersection gives g(n,6) = 1 for 1, 5.
+-->
+
+<h2>RSA Cryptosystem</h2>
+This is a system for encryption and decryption widely used on the internet, devised by Rivest, Shamir and Adleman (RSA) of MIT in 1977. It is a public-key cryptosystem.
+<p>
+To outsiders like you and me, to understand RSA means to know:
+<ol>
+<li>What is a public-key cryptosystem?</li>
+<li>How does it work? Where is it used on the internet?</li>
+<li>Did anyone try to break it? Is the system unbreakable?</li>
+</ol>
+To answer all these questions, we have to go back to different methods of encryption and decryption, and the idea of codes, numbers, and keys.
+<p>
+Some years ago I have written a series <a href="pkey.html">Public Key Encryption</a>.
+There are 5 parts, giving an in-depth explanation of the above questions based on the cyclic math we have learnt.
+<p>
+After that, I have also written a TiddlyWiki <a href="primes.html">Prime Applications</a>.
+The second application is "Prime for Secrets", which uses a slightly different method to explain cyclic math.
+
+<div width="32%" align="right">Click to enlarge (click again to close)&nbsp;&nbsp;&nbsp;</br>
+<img src="The.Imitation.Game.GN.jpg" width="32%" align="right"
+     alt="The Imitation Game: Alan Turing Decoded (ISBN: 1419718932)" onclick="showPopup(this)" />
+</div>
+<h2>Alan Turing</h2>
+In 1936 Alan Turing, aged 24, realised all computations can be simulated by a very simple, and very basic machine. He called this a <b>universal</b> machine. His theory shows that it can be based on just two symbols: 1 and 0 in binary, or 'true' and 'false' in logic. This is encoding/decoding bits (binary digits) by logic, or logic by bits. Since math is built upon logic, his machine can be used to prove theorems. Since information can be digitised into bits, his machine can be use to manipulate text, display pictures, play music and show movies. Nowadays, his 'machine' is at the heart of every computer -- and your smartphone is just a computer with lots of apps!
+<p>
+This graphic novel "The Imitation Game: Alan Turing Decoded"【2】chronicles his life and legend.
+It is a powerful, sympathetic portrait of one of the twentieth century's great minds.
+The novel touches on his view on math and algorithm: the idea of his universal machine (page 43).
+
+<h2>Epilog</h2>
+<div width="32%" align="right">Click to enlarge (click again to close)&nbsp;&nbsp;&nbsp;</br>
+<img src="https://jhlchan.bitbucket.io/turing/The.Imitation.Game.2014.jpg" width="32%" align="right"
+     alt="The Imitation Game (2014), Benedict Cumberbatch and Keira Knightley." onclick="showPopup(this)" />
+</div>
+The 2014 historical drama movie "The Imitation Game"【3】is a dramatisation of the codebreaking effort of Alan Turing, who cracked the Enigma used by the Germans.
+<p>
+The Enigma was a machine both for encrypting and decrypting, using the same key. The key would change at midnight, and the Germans were confident that the Enigma code was unbreakable for human.
+<p>
+Indeed it was, except that Turing broke it by a machine! He built essentially a special-purpose computer to search for the key, and applied ingenious mathematical tricks to reduce the search effort substantially.
+
+<!--
+
+Which day do you consider the start of the week?
+https://www.abc.net.au/news/2019-08-18/which-day-do-you-consider-the-start-of-the-week/11346348
+ABC Radio Darwin, by Gabrielle Lyons.
+Posted Sunday 18 August 2019 at 6:00am.
+
+The Imitation Game: Alan Turing Decoded
+(Jim Ottaviani and Leland Purvis, 2016. ISBN: 1419718932)
+https://jhlchan.bitbucket.io/turing/The.Imitation.Game.GN.jpg
+https://jhlchan.bitbucket.io/turing/The.Imitation.Game.GN.pdf
+
+The Imitation Game: Alan Turing Decoded
+By Jim Ottaviani and Leland Purvis
+https://gt-labs.com/book/the-imitation-game-alan-turing-decoded/
+This book offers an enigmatic (ahem, pun intended) look at Alan Turing's life, his studies, his work to decode the German messages during WWII, and his post-war efforts in digital computing and artificial intelligence.
+
+Abrams has prepared a teaching guide (pdf) to assist you in using the book in your classroom.
+(Thanks to Peter Gutierrez for his excellent work on this!) 
+https://gt-labs.com/wp-content/web_extras/ImitationGame_TeachingGuide.pdf
+
+【17】The.Imitation.Game.2014
+https://drive.google.com/drive/folders/1YNCgEygvp8IjjFvvFkMqyA8A1Pa5JH16
+
+Click Google Drive for The Imitation Game download.
+The files are:
+The.Imitation.Game.2014.jpg (poster)
+The.Imitation.Game.2014.mp4 (movie, 755MB, duration: 1:54:13)
+The.Imitation.Game.2014.srt (subtitle)
+After downloading to your laptop or smartphone, try open and play (or simply by double clicking). Most video player can handle mp4 files, and figure out how to configure your video player to read the subtitle file. If there are problems, install free VLC from App Store or Google Play or Microsoft Store.
+
+Alan Turing: The Enigma【27:32】
+https://www.youtube.com/watch?v=UTmsSG8OW5M
+
+-->
+
+
+<h2>Links</h2>
+<ul>
+<li>【1】Which day do you consider the start of the week?<br>
+<a href="https://www.abc.net.au/news/2019-08-18/which-day-do-you-consider-the-start-of-the-week/11346348">https://www.abc.net.au/news/2019-08-18/which-day-do-you-consider-the-start-of-the-week/11346348</a><br>
+ABC Radio Darwin, by Gabrielle Lyons. Posted Sunday 18 August 2019 at 6:00am.
+<p>
+</li>
+<li>【2】The Imitation Game: Alan Turing Decoded (Jim Ottaviani and Leland Purvis, 2016. 207 pages.)<br>
+<a href="https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf">https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf</a><br>
+This book offers an enigmatic look at Alan Turing's life, his studies, his work to decode the German messages during WWII, and his post-war efforts in digital computing and artificial intelligence.
+<p>
+</li>
+<li>【3】The Imitation Game (2014) in Google Drive:<br>
+<a href="https://drive.google.com/drive/folders/1YNCgEygvp8IjjFvvFkMqyA8A1Pa5JH16">https://drive.google.com/drive/folders/1YNCgEygvp8IjjFvvFkMqyA8A1Pa5JH16</a><br>
+Download the movie (mp4, 755MB, duration: 1:54:13) and the subtitle (srt). Double click to play.
+Most video players can handle mp4 files. You may need to figure out how to configure your video player to use the subtitle file.
+If your player runs into problems, install the free VLC from App Store or Google Play or Microsoft Store.
+<p>
+</li>
+<!-- end of links -->
+</ul>
+
+
+
+<hr>
+<!-- https://jhlchan.github.io/tools/git.html -->
+</body>
+</html>
