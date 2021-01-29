@@ -1,0 +1,587 @@
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>Physics and Computing</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() { 
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>Physics and Computing</br>
+<small><small>in science and animation</small></small></h1>
+
+We shall take a look at physics, and how it is relevant in computer science.
+<p>
+
+<h2>What is Physics</h2>
+Physics is the study of nature.
+<p>
+It is about curiosity and logic: how nature works. 
+The logic leads to the math behind physics, and the curious physicists find out the laws of nature.
+<p>
+The scope of physics is astounding:
+<ul>
+<li>from the universe as we know,</li>
+<li>to the stars we see through telescopes,</li>
+<li>to the beautiful rainbow across the sky,</li>
+<li>to the snowflakes under a microscope,</li>
+<li>to the molecules and atoms of chemistry,</li>
+<li>to the fundamental particles we can detect.</li>
+</ul>
+All these are parts of nature, and all of them are described by math equations【1】.
+<p>
+<div width="32%" align="right">Click to enlarge (click again to close)&nbsp;&nbsp;&nbsp;</br>
+<img src="https://jhlchan.bitbucket.io/feynman/Feynman.GN.jpg" width="32%" align="right"
+     alt="Feynman: A Graphic Novel (Jim Ottaviani, 2011. ISBN: 1596438274)" onclick="showPopup(this)" />
+</div>
+Richard Feynman won a Nobel prize in physics. When he was young, he taught his little sister math and physics. One evening he encountered the northern lights over a nearby golf course. He woke up his sister and took her to view the amazing sight. She was captivated. Later, when she was doing research in aurora, she requested her brother, whom she knew can solve any physics problem, to stay away from her topic. He kept his promise. Eventually his sister, Joan Feynman, became an astrophysicist.
+Her story is featured in【2】【3】, and the graphic novel【4】page 26.
+
+<h2>Physics and Art</h2>
+There are two ways to appreciate the beauty of nature: science and art.
+<p>
+Do you know how to make a rainbow【5】? Art forms can be produced by sound waves, as well as ferrofluids【6】. There is even geometry from soap bubbles【7】.
+<p>
+The smile of Mona Lisa【8】is a combination of art, science, optics, and illusion. It was the work of Leonardo da Vinci, an artist and an engineer who also studied human anatomy.
+<p>
+The art of paper folding is called <b>origami</b>. Robert Lang, a NASA physicist, turned into an origami artist making real-world applications of origami to engineering problems【9】【10】. His complex and elegant designs make use of math and physics.
+
+<h2>Physics and Animation</h2>
+There is another way to put art and science together: computer animation.
+<p>
+Animation movies have their own worlds. For these worlds to be realistic, they mimic our natural world, follow the same laws. Having a good understanding of physics can help to place the characters and special effects in a consistent and believable world. 
+<p>
+These animation techniques are highly developed in studios like Pixar【11】and Dreamworks【14】,
+with programmers and animators working together to refine their software systems.
+Think about how to draw and paint the following:
+<ul>
+<li>mesmerizing lights and shades through water in Finding Nemo【12】,</li>
+<li>graceful movement and flowing hair of Merida in Brave【13】,</li>
+<li>swirling flights of Toothless in How to Train Your Dragon【15】,</li>
+<li>Melman the giraffe balancing on tightrope in Madagascar【16】.</li>
+</ul>
+<p>
+All these frame sequences are computed, using knowledge in physics!
+
+<div width="32%" align="right">Click to enlarge (click again to close)&nbsp;&nbsp;&nbsp;</br>
+<img src="https://jhlchan.bitbucket.io/kubo/Kubo.and.The.Two.Strings.2016.jpg" width="32%" align="right"
+     alt="Kubo and The Two Strings (2016), directed by Travis Knight and produced by Laika." onclick="showPopup(this)" />
+</div>
+<h2>Epilog</h2>
+You probably have seen "Kubo and The Two Strings"【17】, a stop-motion animation movie. Its setting is traditional Japan, with origami, floating lanterns, legends and music.
+<p>
+Each frame of the movie is painstakingly photographed through puppets and models, statically. The motion is an illusion in our brains produced by the fast-changing frames. 
+The scale models for the various scenes and techniques of photography take a lot of skills in physics and engineering.
+
+<!--
+
+Mathematics is the queen of Sciences【53:51】
+https://www.youtube.com/watch?v=8mve0UoSxTo
+About math and physics, on PBS network's NOVA program series, 2015.
+
+Joan Feynman: Being Feynman's Curious Sister【17:46】
+https://www.youtube.com/watch?v=fuN8UzQCRWo
+A talk at Feynman 100: a celebration of Richard Feynman's life and legacy.
+
+The Sun is Always Shining on Joan Feynman (by Laura Faye Tenenbaum)
+https://www.jpl.nasa.gov/blog/2015/5/the-sun-is-always-shining-on-joan-feynman
+“The whole point of science is to understand the mysteries you see around you,” she said.
+
+Joan Feynman: From auroras to anthropology (by Christopher Riley)
+https://findingada.com/shop/a-passion-for-science-stories-of-discovery-and-invention/joan-feynman-from-auroras-to-anthropology/
+A detailed account of Joan Feynman’s career. (quite long)
+
+Feynman: A Graphic Novel (Jim Ottaviani, 2011)
+https://jhlchan.bitbucket.io/feynman/Feynman.GN.jpg
+https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf
+
+5 Ways to make a Rainbow. Science Experiments You Can Do At Home【2:27】
+https://www.youtube.com/watch?v=dIdE-pqYqbs
+from Kitchen Science Lab, presented by Dasha, mommy to Artem and Veronica.
+
+When science meets art | Fabian Oefner | TEDxWarwick【10:24】
+https://www.youtube.com/watch?v=vYN-anlXcBs
+Fabian Oefner is a talented photographer based in Switzerland whose work marries visual aesthetics and science.
+
+Integration of Art and Science | Yoko Shimizu | TEDxTokyo【8:05】
+https://www.youtube.com/watch?v=uDfVMvbCusY
+Yoko Shimizu is a contemporary artist and biochemistry researcher.
+
+The Science Behind Mona Lisa’s Smile (by Walter Isaacson)
+https://www.theatlantic.com/magazine/archive/2017/11/leonardo-da-vinci-mona-lisa-smile/540636/
+How Leonardo da Vinci engineered the world’s most famous painting
+His greatest triumph of combining art, science, optics, and illusion was the smile of the Mona Lisa, which he started working on in 1503.
+
+How Leonardo Da Vinci 'Augmented Reality' — 500 Years Ago【3:00】
+https://www.youtube.com/watch?v=GyT1wPQSER8
+How Da Vinci made the Mona Lisa interactive using innovative painting techniques and the physiology of the human eye.
+
+See a NASA Physicist's Incredible Origami【3:01】
+https://www.youtube.com/watch?v=DJ4hDppP_SQ
+By Robert Lang, a physicist and an origami artist.
+
+The math and magic of origami | Robert Lang【18:04】
+https://www.youtube.com/watch?v=NYKcOFQCeno
+Using math and engineering principles to fold mind-blowingly intricate designs, beautiful and useful.
+
+11 Levels of Origami: Easy to Complex | WIRED【16:11】
+https://www.youtube.com/watch?v=MDwPXRy9IFc
+From a simple, traditional cicada to an extremely intricate one.
+
+
+School Of Art & Design
+https://soad.cass.anu.edu.au
+ANU College of Arts & Social Sciences
+
+The Science of Art and The Art of Science: Albert Frantz at TEDxVienna【17:32】
+https://www.youtube.com/watch?v=VU8uvJkMBaA
+but culture and philosophy?
+
+The art of science and the science of art | Ikumi Kayama | TEDxFoggyBottom【6:02】
+https://www.youtube.com/watch?v=cX8sqJYj06I
+Ikumi Kayama is a medical science illustrator.
+
+Museum of Science’s The Science Behind Pixar
+https://sciencebehindpixar.org
+Explore the Exhibit | For Educators | For Researcher.
+
+Pixar's UP and its Physics【3:40】
+https://www.youtube.com/watch?v=iX77cmr7JkQ
+Can balloons really carry a single house? The house should already floated.
+
+The magic ingredient that brings Pixar movies to life | Danielle Feinberg【12:05】
+https://www.youtube.com/watch?v=Z1R1z9ipFnM                                                             
+Danielle Feinberg, Pixar's director of photography, gives a TED talk.
+How Pixar interweaves art and science to create fantastic worlds.
+
+Computer Simulation (Pixar in a Box)【2:07】
+https://www.youtube.com/watch?v=YeYW8TIWLG8
+Hayley Iben at Pixar explains how to computationally simulate Merida's hair in Brave.
+
+A Rare Look Inside Pixar Studios | The New York Times【6:09】
+https://www.youtube.com/watch?v=CXtsEhUwTmc
+
+On The Verge: inside Pixar Animation Studios with Monsters University【7:46】
+https://www.youtube.com/watch?v=4gAlsk9t950
+
+Inside Pixar: Behind the Doors of Imagination | ENDEVR Documentary【20:43】
+https://www.youtube.com/watch?v=G_TyMFNIznQ
+8 months ago!
+
+Pixar Director of Photograph, Lightning (just talking, she started with Logo!)
+DP for Lighting Danielle Feinberg on Working at Pixar
+https://www.youtube.com/watch?v=k8CkVu11odI (1:44) Part 1
+https://www.youtube.com/watch?v=9OLIiBHchm8 (1:49) Part 2
+https://www.youtube.com/watch?v=W9gD3ZbVtjE (1:59) Part 3
+https://www.youtube.com/watch?v=c8YveXe6pdQ (2:03) Part 4
+https://www.youtube.com/watch?v=ckiGYHdV_9E (1:25) Part 5
+Danielle Feinberg Talks Lighting in "COCO" Movie
+https://www.youtube.com/watch?v=nqvbkajqzSk 【4:41】
+
+How Pixar created its most complex character yet for 'Finding Dory' (CNET News)【3:54】
+https://www.youtube.com/watch?v=Nn0S2vmSCU0
+about the octopus without a leg.
+
+Pixar Movie Soul and Quantum Physics【27:17】
+https://www.youtube.com/watch?v=mEM9NoJsCEA
+from Cosmic Corner
+
+Disney's Frozen A Material Point Method For Snow Simulation【3:54】
+https://www.youtube.com/watch?v=O0kyDKu8K-k
+Just demo of the result of MPM algorithm.
+
+CGI Dreamworks Animation Studio Pipeline | CGMeetup【15:43】
+https://www.youtube.com/watch?v=ru0tQRJ4qKs
+Dreamworks Animation Studio: Pipeline Script to Screen.
+Dreamworks Education presents: Pipeline Script to Screen.
+
+Physics of Animation - Science Nation【2:32】
+https://www.youtube.com/watch?v=h6iu7e7jS1o
+With support from the National Science Foundation, San Jose State University Physicist Alejandro Garcia has developed a course in physics for animators and artists. He is also spending a semester as a consultant for animators at DreamWorks Studio in northern California.
+
+Physics and Art
+http://ffden-2.phys.uaf.edu/webproj/212_spring_2014/Mackenzie_Stamey/13372891095367dd00eede6/index.html
+by Mackenzie Stamey, Physics 212, Spring 2014.
+
+PHYS 109 - Physics in the Arts
+https://www.phys.hawaii.edu/ams02/PHYSART_web/physart.html
+“Physics in the Arts” provides a wonderful insight into how science and art are deeply interconnected. It shows us how scientific principles are used in art and how art is hidden in science.
+(no course materials)
+
+Behind the Scenes of DreamWorks Animation【3:12】
+https://www.youtube.com/watch?v=Nr9yUFPG1UA
+Jeffrey Katzenberg, founder and CEO of DreamWorks Animation, talks about his studio.
+
+Intel® Technology Plays Key Role in How to Train Your Dragon 2 | Intel【2:16】
+https://www.youtube.com/watch?v=N16Qsj6kAhw
+DreamWork animators team up with Intel to put a combination of dreams artistry and technology to bring the delight in DreamWorks movies.
+
+Dreamworks Studio Tour【5:35】
+https://www.youtube.com/watch?v=CpS3_-_OXxw
+Ricardo Azevedo visits the DreamWorks Animation Studios in southern California.
+
+Pixar`s Animation Studios Tour!【4:52】
+Nick Gulan
+https://www.youtube.com/watch?v=dp4Jhm4ZI1I
+DREAMWORKS STUDIO TOUR!! - Vidcon (Day 2)【6:21】
+https://www.youtube.com/watch?v=WLjO_pI0KcI
+
+Kubo and The Two Strings (2016)
+https://drive.google.com/drive/folders/1G05s-SatzAVjnC33vfI0Xxlmo4c1qjK1
+
+
+YouTube search: physics and art
+
+
+The Laws of Physics / Secrets and Techniques【3:25】
+https://www.youtube.com/watch?v=dzk0-jVN8Hc
+
+The Art Of Physics - Demonstration Of Order And Chaos【3:54】
+https://www.youtube.com/watch?v=BCWsdsSrw9o
+
+The Art of Physics - Robbert Dijkgraaf - 5/11/2018【13:40】
+https://www.youtube.com/watch?v=-jzbcVYAEa0
+
+Art and Physics: Accidental Painting【3:01】
+https://www.youtube.com/watch?v=lUcogtIISTA
+
+Flow Visualization: Art and Physics【8:41】
+https://www.youtube.com/watch?v=ctLxhQDHMag
+
+"Art & Physics: Parallel Visions in Space, Time & Light" Lecture by Dr. Leonard Shlain【54:05】
+https://www.youtube.com/watch?v=cRgzRdFRXXk
+
+Walter Lewin on physics, art, secrets of teaching and the main mysteries of the Universe【1:25:23】
+https://www.youtube.com/watch?v=Ma0SNt9NsKk
+
+Did you watch the sitcom Big Bang Theory? Sheldon's idol Richard Feynman is a Nobel-winning physicist. There is a movie about him [6], and a graphic novel (attached).
+
+Infinity 1996【1:48:14】with cc
+https://www.youtube.com/watch?v=Lcn4pfFslVE
+A biography of Richard Feynman, very emotional.
+
+Feynman: A Graphic Novel (Jim Ottaviani, 2011. ISBN: 1596438274)
+https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf
+
+Michelle Feynman | tedxcaltech.com (18 January 2013)
+http://tedxcaltech.com/content/michelle-feynman
+Michelle Feynman is the daughter of Richard Feynman. A graduate of Art Center College of Design, Michelle is a freelance photographer and spends most of her days taking pictures. She is perhaps best known as the editor of Perfectly Reasonable Deviations from the Beaten Track: The Letters of Richard P. Feynman, a collection of letters to and from her father.
+
+TEDxCaltech - Michelle Feynman and Christopher Sykes - Fun to Imagine【13:11】
+https://www.youtube.com/watch?v=dQai9QikTBI (got, 130.55MB)
+
+Richard Feynman: Physics is fun to imagine | TED Talk | TED.com
+https://www.ted.com/talks/richard_feynman
+
+Richard P Feynman - Fun to Imagine (full) 【1:08:50】
+https://www.youtube.com/watch?v=4zZbX_9ru9U
+
+Richard Feynman - The Pleasure of Finding Things Out【49:39】
+http://www.dailymotion.com/video/x24gwgc_richard-feynman-the-pleasure-of-finding-things-out_news (got, 296MB)
+http://proxy-03.sg1.dailymotion.com/video/273/934/128439372_mp4_h264_aac_hq.mp4 
+
+Richard Feynman - The Last Journey Of A Genius【54:38】
+http://www.dailymotion.com/video/x24ggol_richard-feynman-the-last-journey-of-a-genius_shortfilms
+
+(no use)
+Surely You're Joking, Mr. Feynman's Daughter! (Alex Santoso • Wednesday, May 29, 2013 at 10:00 AM)
+https://www.neatorama.com/2013/05/29/Surely-Youre-Joking-Mr-Feynmans-Daughter/
+Read the rest over at Discover Magazine: Link
+
+The Feynman File | DiscoverMagazine.com (By Michelle Feynman, Mar 31, 2005)
+https://www.discovermagazine.com/the-sciences/the-feynman-file
+
+The Dialogues: Conversations About the Nature of the Universe
+https://thedialoguesbook.com
+written and illustrated by Clifford V. Johnson, published by MIT Press, 2017.
+about general relativity, concepts of calculus, etc. too much for beginners.
+
+Animation Physics
+http://animationphysics.org/
+A free educational resource for animation artists.
+all in YouTube
+https://www.youtube.com/user/AlejandroLuisGarcia/
+Basic Animation Tutorials
+Character Animation Tutorials
+Effects Animation Tutorials
+Lighting and Visual Effects Tutorials
+
+Alejandro Garcia: Teaching
+http://www.algarcia.org/teaching.html
+many courses with slides!
+
+Lecture Series - The Physics of Animation: Professor Alejandro Garcia【1:01:32】
+https://www.youtube.com/watch?v=t-1AYINgkpg
+A whole lecture, explains tightrope balancing from timestamp 10:30.
+
+Interview: The Physics for Animators - Alejandro Garcia【20:52】
+https://www.youtube.com/watch?v=MhgIsG-dfg8
+Explains his animation course, mostly talking.
+
+University Scholar Series: Alejandro Garcia【55:28】
+https://vimeo.com/69035863
+???
+
+The Big Bang Theory Full Episodes
+https://www.youtube.com/playlist?list=PLnB8nsiawOGAutVpw7dIlc2QB8XCbs2sT
+each video is just 3 minutes!
+
+The Big Bang Theory
+https://www.youtube.com/show/SCE0P7pP80LuYB_L8NjwLS2A?season=1
+need to pay!
+
+The Big Bang Theory; Season 12 Episode 23 | FULL
+https://www.youtube.com/watch?v=cnh0BnoctT8
+click this link: http://4-Free.ml/z1hk (need free account)
+
+Young Sheldon
+https://www.tvnz.co.nz/shows/young-sheldon
+
+Cheryl Praeger
+https://en.wikipedia.org/wiki/Cheryl_Praeger
+In 2021 she was appointed as an Companion of the Order of Australia for "eminent service to mathematics, and to tertiary education, as a leading academic and researcher, to international organisations, and as a champion of women in STEM careers".
+
+-->
+
+<h2>Links</h2>
+<ul>
+<li>【1】Mathematics is the queen of Sciences【53:51】<br>
+<a href="https://www.youtube.com/watch?v=8mve0UoSxTow">
+<img src="http://img.youtube.com/vi/8mve0UoSxTo/0.jpg" width="15%"/></a><br>
+About math and physics, on PBS network's NOVA program series, 2015.
+<p>
+</li>
+<li>【2】Joan Feynman: Being Feynman's Curious Sister【17:46】<br>
+<a href="https://www.youtube.com/watch?v=fuN8UzQCRWo">
+<img src="http://img.youtube.com/vi/fuN8UzQCRWo/0.jpg" width="15%"/></a><br>
+A talk at Feynman 100: a celebration of Richard Feynman's life and legacy.
+<p>
+</li>
+<li>【3】The Sun is Always Shining on Joan Feynman (by Laura Faye Tenenbaum)<br>
+<a href="https://www.jpl.nasa.gov/blog/2015/5/the-sun-is-always-shining-on-joan-feynman">https://www.jpl.nasa.gov/blog/2015/5/the-sun-is-always-shining-on-joan-feynman</a><br>
+“The whole point of science is to understand the mysteries you see around you,” she said.
+<p>
+</li>
+</li>
+<li> Joan Feynman: From auroras to anthropology (by Christopher Riley)<br>
+<a href="https://findingada.com/shop/a-passion-for-science-stories-of-discovery-and-invention/joan-feynman-from-auroras-to-anthropology/">https://findingada.com/shop/a-passion-for-science-stories-of-discovery-and-invention/joan-feynman-from-auroras-to-anthropology/</a><br>
+A very detailed account of Joan Feynman’s career.
+<p>
+</li>
+<li>【4】Feynman: A Graphic Novel (Jim Ottaviani, 2011. 283 pages.)<br>
+<a href="https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf">https://jhlchan.bitbucket.io/feynman/Feynman.GN.pdf</a><br>
+The graphic novel is composed of short stories about Richard Feynman. It touches on his physics: from elementary to Nobel-prize level.
+<p>
+</li>
+<li>【5】Five Ways to make a Rainbow. Science Experiments You Can Do At Home【2:27】<br>
+<a href="https://www.youtube.com/watch?v=dIdE-pqYqbs">
+<img src="http://img.youtube.com/vi/dIdE-pqYqbs/0.jpg" width="15%"/></a><br>
+From Kitchen Science Lab, presented by Dasha, mommy to Artem and Veronica.
+<p>
+</li>
+<li>【6】When science meets art | Fabian Oefner | TEDxWarwick【10:24】<br>
+<a href="https://www.youtube.com/watch?v=vYN-anlXcBs">
+<img src="http://img.youtube.com/vi/vYN-anlXcBs/0.jpg" width="15%"/></a><br>
+Fabian Oefner is a talented photographer based in Switzerland whose work marries visual aesthetics and science.
+<p>
+</li>
+<li>【7】Integration of Art and Science | Yoko Shimizu | TEDxTokyo【8:05】<br>
+<a href="https://www.youtube.com/watch?v=uDfVMvbCusY">
+<img src="http://img.youtube.com/vi/uDfVMvbCusY/0.jpg" width="15%"/></a><br>
+Yoko Shimizu is a contemporary artist and biochemistry researcher.
+<p>
+</li>
+<li>【8】The Science Behind Mona Lisa’s Smile (by Walter Isaacson)<br>
+<a href="https://www.theatlantic.com/magazine/archive/2017/11/leonardo-da-vinci-mona-lisa-smile/540636/">https://www.theatlantic.com/magazine/archive/2017/11/leonardo-da-vinci-mona-lisa-smile/540636/</a><br>
+How Leonardo da Vinci engineered the world’s most famous painting, with the following YouTube video.
+<p>
+</li>
+<li> How Leonardo Da Vinci 'Augmented Reality' — 500 Years Ago【3:00】<br>
+<a href="https://www.youtube.com/watch?v=GyT1wPQSER8">
+<img src="http://img.youtube.com/vi/GyT1wPQSER8/0.jpg" width="15%"/></a><br>
+The painter made the Mona Lisa interactive using innovative techniques and the physiology of human eye.
+<p>
+</li>
+<li>【9】See a NASA Physicist's Incredible Origami【3:01】<br>
+<a href="https://www.youtube.com/watch?v=DJ4hDppP_SQ">
+<img src="http://img.youtube.com/vi/DJ4hDppP_SQ/0.jpg" width="15%"/></a><br>
+By Robert Lang, a physicist and an origami artist.
+<p>
+</li>
+<li>【10】The math and magic of origami | Robert Lang【18:04】<br>
+<a href="https://www.youtube.com/watch?v=NYKcOFQCeno">
+<img src="http://img.youtube.com/vi/NYKcOFQCeno/0.jpg" width="15%"/></a><br>
+Using math and engineering principles to fold mind-blowingly intricate designs, beautiful and useful.
+<p>
+</li>
+<li> 11 Levels of Origami: Easy to Complex | WIRED【16:11】<br>
+<a href="https://www.youtube.com/watch?v=MDwPXRy9IFc">
+<img src="http://img.youtube.com/vi/MDwPXRy9IFc/0.jpg" width="15%"/></a><br>
+From a simple, traditional cicada to an extremely intricate one.
+<p>
+</li>
+<!-- Pixar -->
+<li>【11】Museum of Science: The Science Behind Pixar<br>
+<a href="https://sciencebehindpixar.org">https://sciencebehindpixar.org</a><br>
+Explore the Exhibit | For Educators | For Researcher. Many resource links.
+<p>
+</li>
+<li> Inside Pixar: Behind the Doors of Imagination | ENDEVR Documentary【20:43】<br>
+<a href="https://www.youtube.com/watch?v=G_TyMFNIznQ">
+<img src="http://img.youtube.com/vi/G_TyMFNIznQ/0.jpg" width="15%"/></a><br>
+John Lasseter notes that "art challenges technology, and technology challenges art."
+<p>
+</li>
+<li>【12】The magic ingredient that brings Pixar movies to life | Danielle Feinberg【12:05】<br>
+<a href="https://www.youtube.com/watch?v=Z1R1z9ipFnM">
+<img src="http://img.youtube.com/vi/Z1R1z9ipFnM/0.jpg" width="15%"/></a><br>
+Danielle Feinberg, Pixar's director of photography, talks about how Pixar interweaves art and science to create fantastic worlds.
+<p>
+</li>
+<li>【13】Computer Simulation (Pixar in a Box)【2:07】<br>
+<a href="https://www.youtube.com/watch?v=YeYW8TIWLG8">
+<img src="http://img.youtube.com/vi/YeYW8TIWLG8/0.jpg" width="15%"/></a><br>
+Hayley Iben at Pixar explains how to simulate Merida's hair in Brave by computer.
+<p>
+</li>
+<li> A Rare Look Inside Pixar Studios | The New York Times【6:09】<br>
+<a href="https://www.youtube.com/watch?v=CXtsEhUwTmc">
+<img src="http://img.youtube.com/vi/CXtsEhUwTmc/0.jpg" width="15%"/></a><br>
+Melena Ryzik gets a rare behind-the-scenes look at the Pixar Studios complex in California.
+<p>
+</li>
+<li> On The Verge: inside Pixar Animation Studios with Monsters University【7:46】<br>
+<a href="https://www.youtube.com/watch?v=4gAlsk9t950">
+<img src="http://img.youtube.com/vi/4gAlsk9t950/0.jpg" width="15%"/></a><br>
+Bryan Bishop visits Pixar and talks to some of the brilliant people behind Monsters University.
+<p>
+</li>
+<!-- DreamWorks -->
+<li>【14】CGI Dreamworks Animation Studio Pipeline | CGMeetup【15:43】<br>
+<a href="https://www.youtube.com/watch?v=ru0tQRJ4qKs">
+<img src="http://img.youtube.com/vi/ru0tQRJ4qKs/0.jpg" width="15%"/></a><br>
+Dreamworks Education presents: Pipeline Script to Screen.
+<p>
+</li>
+<li> Behind the Scenes of DreamWorks Animation【3:12】<br>
+<a href="https://www.youtube.com/watch?v=Nr9yUFPG1UA">
+<img src="http://img.youtube.com/vi/Nr9yUFPG1UA/0.jpg" width="15%"/></a><br>
+Jeffrey Katzenberg, founder and CEO of DreamWorks Animation, talks about his studio.
+<p>
+</li>
+<li>【15】Physics of Animation - Science Nation【2:32】<br>
+<a href="https://www.youtube.com/watch?v=h6iu7e7jS1o">
+<img src="http://img.youtube.com/vi/h6iu7e7jS1o/0.jpg" width="15%"/></a><br>
+Alejandro Garcia has developed a course in physics for animators and artists. He is also spending a semester as a consultant for animators at DreamWorks Studio in northern California (before 2015).
+<p>
+</li>
+<li>【16】Lecture Series - The Physics of Animation【1:01:32】<br>
+<a href="https://www.youtube.com/watch?v=t-1AYINgkpg">
+<img src="http://img.youtube.com/vi/t-1AYINgkpg/0.jpg" width="15%"/></a><br>
+Professor Alejandro Garcia explains the physics of tightrope balancing (timestamp 10:30).
+<p>
+</li>
+<li> Intel® Technology Plays Key Role in How to Train Your Dragon 2【2:16】<br>
+<a href="https://www.youtube.com/watch?v=N16Qsj6kAhw">
+<img src="http://img.youtube.com/vi/N16Qsj6kAhw/0.jpg" width="15%"/></a><br>
+DreamWork animators team up with Intel to put a combination of dreams artistry and technology to bring the delight in DreamWorks movies.
+<p>
+</li>
+<li> Dreamworks Studio Tour【5:35】<br>
+<a href="https://www.youtube.com/watch?v=CpS3_-_OXxw">
+<img src="http://img.youtube.com/vi/CpS3_-_OXxw/0.jpg" width="15%"/></a><br>
+Ricardo Azevedo visits the DreamWorks Animation Studios in southern California (after 2015).
+<p>
+</li>
+<!-- movie -->
+<li>【17】Kubo and the Two Strings (2016) in Google Drive:<br>
+<a href="https://drive.google.com/drive/folders/1G05s-SatzAVjnC33vfI0Xxlmo4c1qjK1">https://drive.google.com/drive/folders/1G05s-SatzAVjnC33vfI0Xxlmo4c1qjK1</a><br>
+Download the movie (mp4, 752MB, duration: 1:41:36) and the subtitle (srt). Double click to play.
+Most video players can handle mp4 files. You may need to figure out how to configure your video player to use the subtitle file.
+If your player runs into problems, install the free VLC from App Store or Google Play or Microsoft Store.
+<p>
+</li>
+<li> Kubo and the Two Strings (2016) - end credits song【3:24】<br>
+<a href="https://www.youtube.com/watch?v=0xxAAXZvCO8">
+<img src="http://img.youtube.com/vi/0xxAAXZvCO8/0.jpg" width="15%"/></a><br>
+This famous classic of George Harrison, <i>While My Guitar Gently Weeps</i>, is sung by Regina Spektor, and played using oriental instruments, including the samisen (三味線), a traditional Japanese instrument with three strings.
+<p>
+</li>
+<!-- end of links -->
+</ul>
+
+<hr>
+<!-- https://jhlchan.github.io/science/physics.html -->
+</body>
+</html>
