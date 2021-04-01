@@ -1,0 +1,22 @@
+# Folders to exclude
+movies/
+books/
+# Files to exlcude
+*.zip
+*.log
+*.srt
+*.gif
+*.jpg
+*.png
+*.pdf
+*.cbr
+*.cbz
+*.txt
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+*.mkv
