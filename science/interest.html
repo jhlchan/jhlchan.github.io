@@ -1,0 +1,149 @@
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- for mobile display -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>Physics and Computing</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() { 
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>Math, Physics and Computing</br>
+<small><small>for the pursuit of interest</small></small></h1>
+
+Let me articulate some resources for math, physics and computing.
+<p>
+
+<h2>Math Resources</h2>
+These math resources are wonderful:
+<ul>
+<li>Project Origami, by Tom Hull?</li>
+<li>Geometry and the Imagination Project, lectures from a summer school.</li>
+<li>Xah Math, full of visual math, at http://xahlee.info/math/math_index.html</li>
+</ul>
+Good starting points for thinking.
+
+<h2>Physics Resources</h2>
+These physics resources are wonderful:
+<ul>
+<li>Einstein Online, with interactive units, for modern physics.</li>
+<li>Any similar interactive tutorials for quantum physics?</li>
+</ul>
+
+<h2>Computing Resources</h2>
+These computing resources are wonderful:
+<ul>
+<li>Python programs for debugging, two volumes?</li>
+<li>GeomLab, but Java no longer works.</li>
+</ul>
+Already introduced the Mathologer and 3Blue1Brown videos.
+
+<h2>General Resources</h2>
+Another good one is Quanta, the online magazine. There are two books from the past articles from Quanta:
+<ol>
+<li>Alice and Bob Meet the Wall of Fire: The Biggest Ideas in Science from Quanta.</li>
+<li>The Prime Number Conspiracy: The Biggest Ideas in Math from Quanta.</li>
+</ol>
+From the introduction of the both books: as it happens, this book picks up where <i>Particle Fever</i> leaves off in telling the story of the quest to understand everything. The stories presented in these two companion volumes reveal efforts over the past five years or so to untangle the mysteries of rhe universe.
+<p>
+Like the magazine, this book is for anyone who wants to understand how nature works. It's for curisoity seekers who want a front-row seat for breakthroughs.
+<p>
+The story of <i>Quanta</i> began in 2012, weeks after the Higgs announcement.
+The magazine I envisioned would apply the best editorial standards, but its coverage would differ ratically from existing news outlets. It wouldn't report on anything you might find useful: no health or medical news, no breathless coverage of science breakthroughs.
+I wanted a science magazine that hepls us achieve escape velocity beyond your own small worlds but is otherwise useless like the way the LHC is useless. This useless magazine became <b>Quanta</b>.
+<!--
+
+Thomas Lin
+https://mitpress.mit.edu/contributors/thomas-lin
+Thomas Lin is the founding editor-in-chief of Quanta Magazine, an online publication that reports on developments in science and mathematics.
+
+-->
+
+<h2>Links</h2>
+<ul>
+<li>【1】Mathematics is the queen of Sciences【53:51】<br>
+<a href="https://www.youtube.com/watch?v=8mve0UoSxTow">
+<img src="http://img.youtube.com/vi/8mve0UoSxTo/0.jpg" width="15%"/></a><br>
+About math and physics, on PBS network's NOVA program series, 2015.
+<p>
+</li>
+  
+<!-- end of links -->
+</ul>
+
+<hr>
+<!-- https://jhlchan.github.io/science/interest.html -->
+</body>
+</html>
