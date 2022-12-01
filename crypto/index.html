@@ -57,7 +57,7 @@ function showPopup(element) {
    var caption = document.getElementById("modal-caption")
    caption.innerHTML = element.alt
    // When the user clicks on image, close the modal
-   image.onclick = function() { 
+   image.onclick = function() {
      modal.style.display = "none"
    }
    // Show the modal
@@ -146,7 +146,7 @@ Similar to the addition table of cycle 7, or modulo 7, we can construct the mult
 --|-----------------   -----------|------------
 1 | 1  2  3  4  5  6            1 | 1 2 3 4 5 6
 2 | 2  4  6  8 10 12            2 | 2 4 6 1 3 5
-3 | 3  6  9 12 15 18            3 | 3 6 2 5 1 4 
+3 | 3  6  9 12 15 18            3 | 3 6 2 5 1 4
 4 | 4  8 12 16 20 24            4 | 4 1 5 2 6 3
 5 | 5 10 15 20 25 30            5 | 5 3 1 6 3 2
 6 | 6 12 18 24 30 36            6 | 6 5 4 3 2 1
@@ -165,7 +165,7 @@ Look at the remainders after division by 7. They are 0 to 6, all less than 7. Le
 <p>
 As a result, (x &#8270; y) mod 7 is nonzero whenever x and y are nonzero. Putting this in another way:
 <p>
-<mark>  
+<mark>
 Result #1: in mod 7 multiplication, the product of nonzeroes is nonzero.
 </mark>
 <p>
@@ -242,7 +242,7 @@ Are you brave enough to go further? I mean, go higher?
 
 <h2>Cyclic Power</h2>
 Similar to the multiplication table of mod 7, we can construct the power table, where:
-x ^ n = x<sup>n</sup> = x &#8270; x &#8270; ... &#8270; x,  over n of them. 
+x ^ n = x<sup>n</sup> = x &#8270; x &#8270; ... &#8270; x,  over n of them.
 Thus for row x, the entries are: x<sup>1</sup>, x<sup>2</sup>, x<sup>3</sup>, up to x<sup>6</sup>.
 We just keep multiplying the result by the mutliplier x. First, we do this the hard way: the table on the left shows ordinary successive powers, the table on the right reduces each entry to a remainder after division by 7.
 <pre>
@@ -250,7 +250,7 @@ We just keep multiplying the result by the mutliplier x. First, we do this the h
 --|-------------------------   -----------|------------
 1 | 1  1   1    1    1     1            1 | 1 1 1 1 1 1
 2 | 2  4   8   16   32    64            2 | 2 4 1 2 4 1
-3 | 3  9  27   81  243   729            3 | 3 2 6 4 5 1 
+3 | 3  9  27   81  243   729            3 | 3 2 6 4 5 1
 4 | 4 16  64  256 1024  4096            4 | 4 2 1 4 2 1
 5 | 5 25 125  625 3125 15625            5 | 5 4 6 2 3 1
 6 | 6 36 216 1296 7776 46656            6 | 6 1 6 1 6 1
@@ -312,7 +312,7 @@ Result #4: for any nonzero remainder x, x<sup>6</sup> mod 7 = 1.
 <h2>Fermat's Little Theorem</h2>
 Of course, 6 = 7 - 1, and 7 is a prime. All the logic of mod 7 arithmetic applies for mod p arithmetic, for a prime p. Therefore we have:
 <p>
-<ul>  
+<ul>
 <li>Result #1 for prime p: </br>
 <mark>Theorem #1: in mod p multiplication for prime p, the product of nonzeroes is nonzero.</mark></li>
 <li>Result #2 for prime p: </br>
@@ -321,7 +321,7 @@ Of course, 6 = 7 - 1, and 7 is a prime. All the logic of mod 7 arithmetic applie
 <mark>Theorem #3: all mod p remainders for prime p form a field under modular addition and multiplication.</mark></li>
 <li>Result #4 for prime p has a name:</br>
 <mark>Theorem #4 (Fermat's Little Theorem): for x nonzero and prime p, x<sup>(p-1)</sup> mod p = 1.</mark></li>
-</ul>  
+</ul>
 <p>
 The last result is first stated by a French mathematician, Pierre de Fermat, in 1640. Before 1940, everyone admires this result in number theory, but no one knows any use of it.
 
@@ -335,7 +335,7 @@ First, the mod 8 addition is nothing unusual:
 --|--------------------   -----------|--------------
 1 | 2  3  4  5  6  7  8            1 | 2 3 4 5 6 7 0
 2 | 3  4  5  6  7  8  9            2 | 3 4 5 6 7 0 1
-3 | 4  5  6  7  8  9 10            3 | 4 5 6 7 0 1 2 
+3 | 4  5  6  7  8  9 10            3 | 4 5 6 7 0 1 2
 4 | 5  6  7  8  9 10 11            4 | 5 6 7 0 1 2 3
 5 | 6  7  8  9 10 11 12            5 | 6 7 0 1 2 3 4
 6 | 7  8  9 10 11 12 13            6 | 7 0 1 2 3 4 5
@@ -498,6 +498,7 @@ In 1936 Alan Turing, aged 24, realised all computations can be simulated by a ve
 This graphic novel "The Imitation Game: Alan Turing Decoded"【2】chronicles his life and legend.
 It is a powerful, sympathetic portrait of one of the twentieth century's great minds.
 The novel touches on his view on math and algorithm: the idea of his universal machine (page 43).
+<p></br></br></br>
 
 <h2>Epilog</h2>
 <div width="32%" align="right">Click to enlarge (click again to close)&nbsp;&nbsp;&nbsp;</br>
@@ -528,7 +529,7 @@ https://gt-labs.com/book/the-imitation-game-alan-turing-decoded/
 This book offers an enigmatic (ahem, pun intended) look at Alan Turing's life, his studies, his work to decode the German messages during WWII, and his post-war efforts in digital computing and artificial intelligence.
 
 Abrams has prepared a teaching guide (pdf) to assist you in using the book in your classroom.
-(Thanks to Peter Gutierrez for his excellent work on this!) 
+(Thanks to Peter Gutierrez for his excellent work on this!)
 https://gt-labs.com/wp-content/web_extras/ImitationGame_TeachingGuide.pdf
 
 【17】The.Imitation.Game.2014

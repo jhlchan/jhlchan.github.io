@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+<!-- for unicode, e.g. embedding Chinese -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<!-- for mobile display -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- ensure all links open in new tab -->
+<base target="_blank"/>
+<title>Xmas 2022</title>
+<link rel="stylesheet" type="text/css" href="../site.css"></link>
+<style type="text/css"> mark {background-color:#91f57a} </style><!-- light green -->
+<script type="text/javascript">
+// set defaults
+function check() {
+    // set_lang('en')    // default language
+    // set_locate('au')  // default location
+    // The following is for FireFox
+    var english = document.getElementById("english")
+    english.checked = true
+    var australia = document.getElementById("australia")
+    australia.checked = true
+}
+// set language
+function set_lang(lang) {
+    var enArray = document.getElementsByClassName('en')
+    var chArray = document.getElementsByClassName('ch')
+    if (lang == 'en') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'inline'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'none'
+    }
+    if (lang == 'ch') {
+       for (var i = 0; i < enArray.length; i++) enArray[i].style.display = 'none'
+       for (var i = 0; i < chArray.length; i++) chArray[i].style.display = 'inline'
+    }
+}
+// set location
+function set_locate(place) {
+    var auArray = document.getElementsByClassName('au')
+    var hkArray = document.getElementsByClassName('hk')
+    if (place == 'au') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'inline'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'none'
+    }
+    if (place == 'hk') {
+       for (var i = 0; i < auArray.length; i++) auArray[i].style.display = 'none'
+       for (var i = 0; i < hkArray.length; i++) hkArray[i].style.display = 'inline'
+    }
+}
+// Show pop-up of image element
+function showPopup(element) {
+   // Get the modal
+   var modal = document.getElementById("modal")
+   // Get the image and insert it inside the modal
+   var image = document.getElementById("modal-content")
+   image.src = element.src
+   // Get the caption and replace it by image alt
+   var caption = document.getElementById("modal-caption")
+   caption.innerHTML = element.alt
+   // When the user clicks on image, close the modal
+   image.onclick = function() {
+     modal.style.display = "none"
+   }
+   // Show the modal
+   modal.style.display = "block"
+}
+</script>
+</head>
+<body class="note" onload="check()">
+<!-- Modal Pop-up: https://www.w3schools.com/howto/howto_css_modal_images.asp -->
+<!-- The Modal -->
+<div id="modal" class="modal">
+  <!-- Modal Content (The Image) -->
+  <img id="modal-content" />
+  <!-- Modal Caption (Image Text) -->
+  <div id="modal-caption"></div>
+</div>
+<!--
+<div align="right" class="banner">
+<input type="radio" name="lang" onclick="set_lang('en')" id="english" value="English" checked /> English |
+<input type="radio" name="lang" onclick="set_lang('ch')" id="chinese" value="Chinese" /> 中文
+</div>
+-->
+<h1>Xmas 2022</br>
+<small><small>about math, science and technology</small></small></h1>
+
+These three books are intended for easy reading over the Xmas holidays.
+<p>
+
+<h2>Pixar Story</h2>
+<div class="imagecap" style="width:32%; float:right; margin:0 20px;">
+<img src="https://jhlchan.bitbucket.io/apple/To.Pixar.and.Beyond.jpg"
+     alt="To Pixar and Beyond (Lawrence Levy, 2016. ISBN: 9781435118584)" onclick="showPopup(this)" />
+<span>Click to enlarge (click again to close)</span>
+</div>
+<b>To Pixar and Beyond: My Unlikely Journey with Steve Jobs to Make Entertainment History</b></br>
+by Lawrence Levy, 2016.</br>
+<a href="https://jhlchan.bitbucket.io/apple/To.Pixar.and.Beyond.pdf">Download</a>【2.5MB, 221 pages】
+<p>
+I have talked about Pixar in my <a href="https://jhlchan.bitbucket.io/2022/dragon.html">Dragon Boat 2022</a>. Here is a book giving an inside view of Pixar, telling its story.
+<p>
+However, the story is not about the science and math of Pixar animation. Rather, it is about how to run the company.
+<p>
+The author, Lawrence Levy, was the chief financial officer (CFO) of Pixar. Thus his narrative has almost nothing about science.
+<p>
+He tells how he got the job, and then after ten years, finished the job. Although he is not a scientist, he is thrilled by the technology of Pixar. He is a great storyteller, with lucid descriptions of the events and characters that shape the rise of Pixar.
+<p>
+I think you'll learn a lot by noting how a non-scientist describes the science of animation. Math and science textbooks don't tell stories. After exams you have time to relax, so reading stories about science without working through equations is fun.
+<p>
+Read the Prologue. If you are captivated, read on!
+<p>
+I am sure you'll be excited by the stories. Perhaps you may learn how to choose a job, and how to tell when to leave a job.
+<p>
+After finished reading, you can get more information from this author's talk【1】.
+
+<!--
+
+Lawrence Levy – Author of To Pixar and Beyond
+https://lawrencelevy.com
+
+【1】To Pixar and Beyond | Lawrence Levy | Talks at Google【41:10】cc
+https://www.youtube.com/watch?v=_YNvex63DwE
+22 December 2016. The never-before-told story of Pixar's improbable success.
+
+-->
+
+<h2>M. C. Escher</h2>
+<div class="imagecap" style="width:32%; float:right; margin:0 20px;">
+<img src="https://jhlchan.bitbucket.io/escher/M.C.Escher.The.Graphic.Work.jpg"
+     alt="M.C. Escher: The Graphic Work (M. C. Escher, 2007. ISBN: 9781435118584)" onclick="showPopup(this)" />
+<span>Click to enlarge (click again to close)</span>
+</div>
+<b>M.C. Escher: The Graphic Work</b></br>
+Introduced and explained by the artist, 2007.</br>
+<a href="https://jhlchan.bitbucket.io/escher/M.C.Escher.The.Graphic.Work.pdf">Download</a>【31.4MB, 95 pages】
+<p>
+Maurits Cornelis Escher was a Dutch woodcut graphic artist. He studied art, but he played with symmetry. By drawing figures with symmetry, he encountered the underlying math in his own way.
+<p>
+You may have come across some of Escher's prints, as his works had been invited for exhibitions around the world. This book collects a majority of his work. He classified them into sections, and wrote comments about each one.
+<p>
+Therefore, reading this book is just studying the wonderful pictures. You can just enjoy the graphical stories. You can also think about the symmetry principles in contruction. You will be amazed at his techniques.
+<p>
+The artist only learned the actual math when he finally met the geometer Donald Coxeter. In 1954 they met at the International Congress of Mathematicians in Amsterdam. This meeting sparked a lifelong correspondence which would influence the work of both men.
+<p>
+This is evident when you look at his work after this time. A series of works titled "Circle Limit" is inspired by a diagram in Coxeter's paper about hyperbolic geometry. Escher had been depicting infinity over the Euclidean plane, but this new insight enabled him to project infinity within a finite region!
+<p>
+After studying the book, you'll appreciate this public lecture: <em>Escher and Coxeter</em>【2】.
+
+
+<!--
+
+Escher and Coxeter – A Mathematical Conversation
+October 6, 2017
+Lecture by Dr. Sarah Hart at the Museum of London / 06.05.2017
+Professor of Mathematics
+Birkbeck, University of London
+https://brewminate.com/escher-and-coxeter-a-mathematical-conversation/
+with text.
+
+Escher and Coxeter - a Mathematical Conversation
+This event was on Mon, 05 Jun 2017
+Professor Sarah Hart, Professor of Geometry
+https://www.gresham.ac.uk/watch-now/escher-and-coxeter-mathematical-conversation
+link to the video, transcript and slides.
+https://www.gresham.ac.uk/sites/default/files/2017-06-05_SarahHart_PDFPresentation.pdf
+
+https://youtu.be/BkxPU0y2uLA
+The artist M.C. Escher’s work often used ingenious tilings of the plane with interlocking figures such as fish and birds. Although these tilings could in principle extend forever, Escher could not show this on a finite picture. But a diagram from a paper by the mathematician Donald Coxeter presented one solution to this conundrum. We will look at the mathematics of this diagram and how Escher used it. We will also see how Coxeter produced mathematical research based on aspects of Escher's work.
+
+【2】Escher and Coxeter - a Mathematical Conversation - Professor Sarah Hart【53:25】cc
+https://www.youtube.com/watch?v=BkxPU0y2uLA
+Gresham College
+
+
+-->
+
+<h2>Hidden Figures</h2>
+<div class="imagecap" style="width:32%; float:right; margin:0 20px;">
+<img src="https://jhlchan.bitbucket.io/nasa/Hidden.Figures.jpg"
+     alt="Hidden Figures (Margot Lee Shetterly, 2016. ISBN: 006236359X)" onclick="showPopup(this)" />
+<span>Click to enlarge (click again to close)</span>
+</div>
+<b>Hidden Figures: The American Dream and the Untold Story of the Black Women Mathematicians Who Helped Win the Space Race</b></br>
+by Margot Lee Shetterly, 2016.</br>
+<a href="https://jhlchan.bitbucket.io/nasa/Hidden.Figures.pdf">Download</a>【1.5MB, 325 pages】
+<p>
+This is an inspiring story about the original 'computers', the ladies who did all computation by hand.
+<p>
+They were doing their jobs helping NASA with the start of space program in 1950s, just before the arrival of elecrtronic computers.
+<p>
+After the war, ladies graduated from colleges were recuited to NASA as low-paid computers. They were divided into two groups: the white ladies in the East Wing, and the black ladies in the West Wing. The US society at that time treated black people as second-class citizens. This is the stories of how a group of black women became the hidden heros of space age.
+<p>
+This book has been turned into a movie, with the same title. They tell almost different stories: the movie concentrates on the careers of three women in NASA, but the book covers the pre-history of a group of women including those three. The author goes into extensive details about the entire history of aeronautics and space-travel, and the whole civil rights movement.
+<p>
+The movie portrays the headquarter of NASA in a single room, which, of course, is not true. However, the movie is not a documentary, it is a drama just aiming to tell a coherent story. It is hard to keep a concise storyline with too many characters.
+<p>
+You may have watched the movie <i>Hidden Figures</i> on TV, as it has been screened repeatedly. If not, you can watch it online【3】.
+
+<!--
+
+Margot Lee Shetterly: Research. Write. Repeat.
+http://margotleeshetterly.com/hidden-figures-nasas-african-american-computers
+
+Margot Lee Shetterly, Author of Hidden Figures: My Path【2:51】cc
+https://www.youtube.com/watch?v=zRghIrJUYTk
+From paper route to award winning author!  Learn about Margot Lee Shetterly's path to publishing Hidden Figures.
+
+Hidden Figures 2016 | 1080p【126:44】= 【2:06:44】no cc
+https://www.bilibili.tv/en/video/2008942694
+
+【3】Hidden Figures (2016)【126:44】= 【2:06:44】no cc
+https://www.bilibili.tv/en/video/2002496116
+https://www.bilibili.tv/en/video/2042517169
+
+-->
+
+<h2>Links</h2>
+<ul>
+<li>【1】To Pixar and Beyond | Lawrence Levy【41:10】cc</br>
+<a href="https://www.youtube.com/watch?v=_YNvex63DwE">
+<img src="http://img.youtube.com/vi/_YNvex63DwE/0.jpg" width="15%"/></a><br>
+A talk at Google on 22 December 2016, about the never-before-told story of Pixar's improbable success.
+Visit <a href="https://lawrencelevy.com">author's website</a> and click "The Book" for reviews and a summary. Also view the photo gallery, read his biography and find more talks.
+<p>
+</li>
+<li> 【2】Escher and Coxeter - a Mathematical Conversation【53:25】cc</br>
+<a href="https://www.youtube.com/watch?v=BkxPU0y2uLA">
+<img src="http://img.youtube.com/vi/BkxPU0y2uLA/0.jpg" width="15%"/></a><br>
+This talk by Professor Sarah Hart, a math professor, is an expanded version of her <a href="https://brewminate.com/escher-and-coxeter-a-mathematical-conversation/">article</a>, with nice pictures illustrating the text. Find the "Download" tab <a href="https://www.gresham.ac.uk/watch-now/escher-and-coxeter-mathematical-conversation">here</a> for the talk transcript and slides.
+<p>
+</li>
+<li>【3】Hidden Figures (2016)【2:06:44】</br>
+<a href="https://www.bilibili.tv/en/video/2002496116">
+<img src="https://jhlchan.bitbucket.io/nasa/Hidden.Figures.2016.jpg" width="15%"/></a></br>
+The movie was made while the book was still being written. Read <a href="http://margotleeshetterly.com/hidden-figures-nasas-african-american-computers">author's website</a> about how the book was conceived, and listen to the author in this <a href="https://www.youtube.com/watch?v=zRghIrJUYTk">video</a>.
+One character in the movie is Katherine Johnson. Still alive at 98, she saw the movie and enjoyed it, "It was well done."
+<p>
+</li>
+<!-- end of links -->
+</ul>
+
+<hr>
+<!-- https://jhlchan.github.io/science/xmas2022.html -->
+</body>
+</html>
