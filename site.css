@@ -14,7 +14,7 @@ h1 {
     text-align: center;
 }
 img {
-    padding:0 16px 16px;  /* left and right padding */  
+    padding:0 16px 16px;  /* left and right padding */
 }
 .menu li {
     margin-bottom: 18px;  /* menu item has bottom spacing */
@@ -90,20 +90,16 @@ th, td {
   height: 150px;
 }
 
-/* The Close Button */
-.close {
-  position: absolute;
-  top: 10px; /* reduce top */
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 16px; /* reduce font */
-  font-weight: bold;
-  transition: 0.3s;
+/* Image with caption */
+.imagecap {
+  /* dummy */
 }
-
-.close:hover,
-.close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
+.imagecap img {
+  float:right;
+  width:100%;
+  padding:0;
+}
+.imagecap span {
+  float:right;
+  margin-bottom:5px;
 }
